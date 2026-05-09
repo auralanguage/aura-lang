@@ -45,7 +45,7 @@ The language core is real and usable for experiments, but the syntax, standard l
 Download one of these from GitHub Releases:
 
 - `aura-windows-x64.zip`
-- `AuraSetup-x64.exe`
+- `AuraSetup-x64.exe` (sorry there is no setup for now)
 
 Then run:
 
