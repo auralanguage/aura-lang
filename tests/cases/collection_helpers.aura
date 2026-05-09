@@ -1,0 +1,12 @@
+fn main() {
+    let numbers: [Int] = [1, 3];
+    insert(numbers, 1, 2);
+    print(numbers[1]);
+
+    let removed: Int = remove_at(numbers, 0);
+    print(removed);
+    print(len(numbers));
+
+    clear(numbers);
+    print(len(numbers));
+}

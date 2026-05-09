@@ -1,0 +1,13 @@
+fn main() {
+    let text: String = "Aura";
+    let middle: String = text[1:3];
+    let head: String = text[:2];
+    let tail: String = text[2:];
+    let nested: String = text[1:][1:2];
+
+    print(middle);
+    print(head);
+    print(tail);
+    print(nested);
+    print(middle == "ur");
+}

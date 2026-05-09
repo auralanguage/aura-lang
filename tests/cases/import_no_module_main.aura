@@ -1,0 +1,5 @@
+import "import_no_module_lib.aura";
+
+fn main() -> Unit {
+    print(1);
+}

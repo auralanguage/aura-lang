@@ -1,0 +1,11 @@
+fn main() {
+    let values: [Int] = [1, 2];
+    insert(values, 1, 7);
+
+    let total: Int = 0;
+    for value in values {
+        total = total + value;
+    }
+
+    print(total);
+}

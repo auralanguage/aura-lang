@@ -1,0 +1,8 @@
+import "module_slice_alias_lib.aura";
+
+fn main() {
+    let numbers: [Int] = [1, 2, 3];
+    let tail: [Int] = slices::tail(numbers);
+    print(tail[0]);
+    push(numbers, 4);
+}

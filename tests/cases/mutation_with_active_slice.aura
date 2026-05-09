@@ -1,0 +1,6 @@
+fn main() {
+    let values: [Int] = [1, 2, 3];
+    let middle: [Int] = values[1:];
+    print(middle[0]);
+    insert(values, 0, 0);
+}

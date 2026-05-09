@@ -1,0 +1,4 @@
+fn main() {
+    let values: [Int] = [1, 2];
+    print(values[2]);
+}

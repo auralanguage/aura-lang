@@ -1,0 +1,10 @@
+import "module_struct_success_lib.aura";
+
+fn main() {
+    let point: shapes::Point = shapes::Point {
+        x: 3,
+        y: 4
+    };
+
+    print(point.sum());
+}

@@ -1,0 +1,13 @@
+fn main() {
+    let first: Char = 'A';
+    let newline: Char = '\n';
+    let letters: [Char] = ['A', 'b'];
+
+    print(first == 'A');
+    print(letters[1]);
+    print(len(letters));
+
+    if newline == '\n' {
+        print("nl");
+    }
+}

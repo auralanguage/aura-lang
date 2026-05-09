@@ -1,0 +1,3 @@
+fn main() {
+    print(file_exists(1));
+}

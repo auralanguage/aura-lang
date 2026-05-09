@@ -1,0 +1,5 @@
+import "build_cli_support_lib.aura";
+
+fn main() {
+    print(buildcli::message());
+}

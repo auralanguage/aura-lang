@@ -1,0 +1,5 @@
+fn main() {
+    for value in 5 {
+        print(value);
+    }
+}

@@ -1,0 +1,19 @@
+fn main() {
+    let text: String = "alpha beta gamma";
+    let words: [String] = ["alpha", "beta", "gamma"];
+    let letters: [Char] = ['o', 'k'];
+
+    print("Aura" + '!');
+    print('>' + "go");
+    print(contains(text, "beta"));
+    print(contains(text, 'b'));
+    print(contains(words, "beta"));
+    print(starts_with(text, "alpha"));
+    print(starts_with(text, 'a'));
+    print(ends_with(text, "gamma"));
+    print(ends_with(text, 'a'));
+    print(join(words, "|"));
+    print(join(letters, "-"));
+    print(file_exists("../fixtures/read_text_sample.txt"));
+    print(contains(read_text("../fixtures/read_text_sample.txt"), "violet sample line"));
+}

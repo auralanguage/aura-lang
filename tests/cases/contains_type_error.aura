@@ -1,0 +1,3 @@
+fn main() {
+    print(contains("alpha", 1));
+}

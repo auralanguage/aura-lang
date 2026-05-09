@@ -1,0 +1,12 @@
+fn main() {
+    let total: Int = 1 + 2 * 3;
+    9 + 10;
+    let letter: Char = "Aura"[1];
+
+    if true {
+        print(total);
+        print(letter);
+    } else {
+        print(0);
+    }
+}

@@ -1,0 +1,9 @@
+struct Counter {
+    value: Int
+
+    fn bump(me: Counter, amount: Int) -> Int {
+        return me.value + amount;
+    }
+}
+
+fn main() {}

@@ -1,0 +1,6 @@
+fn main() -> Unit {
+    print("A" == 'A');
+    print('A' == "A");
+    print("Aura" != 'A');
+    print('Z' != "A");
+}

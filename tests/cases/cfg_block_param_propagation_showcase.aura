@@ -1,0 +1,13 @@
+fn main() {
+    let text: String = "Aura";
+    let flag: Bool = file_exists("Aura.toml");
+
+    if flag {
+        print("left");
+    } else {
+        print("right");
+    }
+
+    print(len(text));
+    print(contains(text, 'u'));
+}

@@ -1,0 +1,14 @@
+fn main() {
+    let values: [Int] = [1, 2];
+
+    if file_exists("Aura.toml") {
+        insert(values, 1, 7);
+    } else {
+        push(values, 9);
+    }
+
+    print(len(values));
+
+    let tail: [Int] = values[1:3];
+    print(len(tail));
+}

@@ -1,0 +1,9 @@
+module slices;
+
+fn tail(values: [Int]) -> [Int] {
+    return values[1:];
+}
+
+fn bump_head(values: [Int], amount: Int) {
+    values[0] = values[0] + amount;
+}

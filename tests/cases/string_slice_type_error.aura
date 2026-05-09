@@ -1,0 +1,3 @@
+fn main() {
+    print("Aura"[true:2]);
+}

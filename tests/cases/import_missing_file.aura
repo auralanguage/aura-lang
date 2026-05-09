@@ -1,0 +1,5 @@
+import "missing_file.aura";
+
+fn main() {
+    print("unreachable");
+}

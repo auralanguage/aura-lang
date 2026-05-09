@@ -1,0 +1,11 @@
+fn main() {
+    let count: Int = len([10, 20, 30]);
+    let range_count: Int = len(2..5);
+    let word: String = join(['A', 'u', 'r', 'a'], "");
+    let has_u: Bool = contains(['A', 'u', 'r', 'a'], 'u');
+
+    print(count);
+    print(range_count);
+    print(word);
+    print(has_u);
+}

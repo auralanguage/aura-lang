@@ -1,0 +1,10 @@
+module shapes;
+
+struct Point {
+    x: Int,
+    y: Int
+
+    fn sum(self: Point) -> Int {
+        return self.x + self.y;
+    }
+}

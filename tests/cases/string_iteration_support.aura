@@ -1,0 +1,17 @@
+fn main() {
+    let count: Int = 0;
+    let second: Char = '?';
+
+    for index, ch in "Aura" {
+        if ch == 'A' || ch == 'a' {
+            count = count + 1;
+        }
+
+        if index == 1 {
+            second = ch;
+        }
+    }
+
+    print(count);
+    print(second);
+}

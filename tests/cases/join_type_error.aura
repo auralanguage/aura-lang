@@ -1,0 +1,4 @@
+fn main() {
+    let numbers: [Int] = [1, 2];
+    print(join(numbers, ","));
+}

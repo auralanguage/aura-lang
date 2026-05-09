@@ -1,0 +1,5 @@
+module buildcli;
+
+fn message() -> String {
+    return "build ok";
+}

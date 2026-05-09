@@ -1,0 +1,6 @@
+fn main() -> Unit {
+    if true
+        let hidden: Int = 7;
+
+    print(hidden);
+}

@@ -1,0 +1,14 @@
+fn main() {
+    let total: Int = 0;
+    for value in 1..5 {
+        total = total + value;
+    }
+    print(total);
+
+    let numbers: [Int] = [3, 4];
+    let weighted: Int = 0;
+    for index, value in numbers {
+        weighted = weighted + index + value;
+    }
+    print(weighted);
+}

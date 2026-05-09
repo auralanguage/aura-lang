@@ -1,0 +1,10 @@
+fn main() {
+    let values: [Int] = [10, 20, 30, 40];
+    let alias: [Int] = values;
+    let part: [Int] = alias[1:3];
+    let ranged: [Int] = 2..5;
+
+    print(alias[2]);
+    print(part[0]);
+    print(ranged[1]);
+}

@@ -1,0 +1,16 @@
+import "module_slice_alias_lib.aura";
+
+fn main() {
+    let numbers: [Int] = [10, 20, 30, 40];
+    let tail: [Int] = slices::tail(numbers);
+    tail[0] = 99;
+
+    let nested: [Int] = tail[1:];
+    nested[0] = 77;
+
+    slices::bump_head(numbers, 5);
+
+    print(numbers[0]);
+    print(numbers[1]);
+    print(numbers[2]);
+}

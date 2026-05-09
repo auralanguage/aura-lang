@@ -1,0 +1,4 @@
+fn main() {
+    print(file_exists("payload.txt"));
+    print(read_text("payload.txt"));
+}

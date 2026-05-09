@@ -1,0 +1,3 @@
+fn leaked() -> Int {
+    return 7;
+}

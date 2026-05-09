@@ -1,0 +1,4 @@
+fn main() {
+    let combined = 'A' + 'B';
+    print(combined);
+}

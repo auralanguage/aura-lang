@@ -1,0 +1,12 @@
+struct Pair {
+    left: Int,
+    right: Int
+}
+
+fn main() {
+    let pair: Pair = Pair {
+        left: 1
+    };
+
+    print(pair.left);
+}
