@@ -1,0 +1,230 @@
+{
+  "cases": [
+    {
+      "name": "lowering-ir-simple-function",
+      "kind": "lowering",
+      "input": "tests/cases/build_cli_support_lib.aura",
+      "dump_ir": true,
+      "exit_code": 0,
+      "stdout_contains": [
+        "fn buildcli::message() -> String {",
+        "return \"build ok\";"
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "lowering-cfg-simple-function",
+      "kind": "lowering",
+      "input": "tests/cases/build_cli_support_lib.aura",
+      "dump_cfg": true,
+      "exit_code": 0,
+      "stdout_contains": [
+        "cfg fn buildcli::message() -> String {",
+        "%0 = literal \"build ok\" : String",
+        "return %0"
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "lowering-ir-cfg-control-flow",
+      "kind": "lowering",
+      "input": "tests/cases/cpp_cfg_ssa_smoke.aura",
+      "dump_ir": true,
+      "dump_cfg": true,
+      "exit_code": 0,
+      "stdout_contains": [
+        "for index, value: Int in numbers",
+        "=== CFG SSA ===",
+        "cfg fn main() -> Int {",
+        "builtin insert(",
+        "literal 4 : Int"
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "lowering-module-method-ir-cfg",
+      "kind": "lowering",
+      "input": "tests/cases/module_struct_success_main.aura",
+      "dump_ir": true,
+      "dump_cfg": true,
+      "exit_code": 0,
+      "stdout_contains": [
+        "struct shapes::Point {",
+        "fn shapes::Point::sum(self: shapes::Point) -> Int {",
+        "print(shapes::Point::sum(point));",
+        "=== CFG SSA ===",
+        "cfg fn shapes::Point::sum(self: shapes::Point %0) -> Int {",
+        "field %0.x : Int",
+        "call shapes::Point::sum("
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "lowering-string-iteration-cfg",
+      "kind": "lowering",
+      "input": "tests/cases/string_iteration_support.aura",
+      "dump_ir": true,
+      "dump_cfg": true,
+      "exit_code": 0,
+      "stdout_contains": [
+        "for index, ch: Char in \"Aura\"",
+        "=== CFG SSA ===",
+        "@for_counter: Int",
+        "@for_iterable: String",
+        "String index",
+        "builtin print("
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "lowering-slice-alias-cfg",
+      "kind": "lowering",
+      "input": "tests/cases/module_slice_alias_success_main.aura",
+      "dump_ir": true,
+      "dump_cfg": true,
+      "exit_code": 0,
+      "stdout_contains": [
+        "fn slices::tail(values: [Int]) -> [Int] {",
+        "fn slices::bump_head(values: [Int], amount: Int) -> Unit {",
+        "=== CFG SSA ===",
+        "cfg fn slices::tail(values: [Int] %0) -> [Int] {",
+        "Slice slice",
+        "assign-index",
+        "call slices::bump_head("
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "lowering-cfg-optimization-showcase",
+      "kind": "lowering",
+      "input": "tests/cases/cfg_optimization_showcase.aura",
+      "dump_cfg": true,
+      "exit_code": 0,
+      "stdout_contains": [
+        "cfg fn main() -> Unit {",
+        "literal 7 : Int",
+        "literal 'u' : Char",
+        "jump block"
+      ],
+      "stdout_not_contains": [
+        "branch ",
+        "String index",
+        "copy ",
+        "drop ",
+        "literal 9 : Int",
+        "literal 10 : Int"
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "lowering-cfg-array-builtin-fold-showcase",
+      "kind": "lowering",
+      "input": "tests/cases/cfg_array_builtin_fold_showcase.aura",
+      "dump_cfg": true,
+      "exit_code": 0,
+      "stdout_contains": [
+        "cfg fn main() -> Unit {",
+        "literal 3 : Int",
+        "literal \"Aura\" : String",
+        "literal true : Bool"
+      ],
+      "stdout_not_contains": [
+        "builtin len(",
+        "builtin join(",
+        "builtin contains(",
+        "array<Char> [",
+        "array<Int> [",
+        "range "
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "lowering-cfg-block-param-propagation-showcase",
+      "kind": "lowering",
+      "input": "tests/cases/cfg_block_param_propagation_showcase.aura",
+      "dump_cfg": true,
+      "exit_code": 0,
+      "stdout_contains": [
+        "cfg fn main() -> Unit {",
+        "builtin file_exists(",
+        "literal 4 : Int",
+        "literal true : Bool",
+        "literal \"left\" : String",
+        "literal \"right\" : String"
+      ],
+      "stdout_not_contains": [
+        "text: String",
+        "builtin len(",
+        "builtin contains("
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "lowering-cfg-collection-data-flow-showcase",
+      "kind": "lowering",
+      "input": "tests/cases/cfg_collection_data_flow_showcase.aura",
+      "dump_cfg": true,
+      "exit_code": 0,
+      "stdout_contains": [
+        "cfg fn main() -> Unit {",
+        "builtin file_exists(",
+        "builtin insert(",
+        "builtin push(",
+        "literal 3 : Int",
+        "literal 2 : Int"
+      ],
+      "stdout_not_contains": [
+        "builtin len(",
+        "branch true",
+        "branch false"
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "lowering-cfg-loop-collection-data-flow-showcase",
+      "kind": "lowering",
+      "input": "tests/cases/cfg_loop_collection_data_flow_showcase.aura",
+      "dump_cfg": true,
+      "exit_code": 0,
+      "stdout_contains": [
+        "cfg fn main() -> Unit {",
+        "builtin insert(",
+        "literal 3 : Int",
+        "Slice index"
+      ],
+      "stdout_not_contains": [
+        "builtin len("
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "lowering-cfg-array-index-fold-showcase",
+      "kind": "lowering",
+      "input": "tests/cases/cfg_array_index_fold_showcase.aura",
+      "dump_cfg": true,
+      "exit_code": 0,
+      "stdout_contains": [
+        "cfg fn main() -> Unit {",
+        "literal 30 : Int",
+        "literal 20 : Int",
+        "literal 3 : Int"
+      ],
+      "stdout_not_contains": [
+        "Slice index"
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "lowering-type-error-surface",
+      "kind": "lowering",
+      "input": "tests/cases/type_mismatch.aura",
+      "dump_ir": true,
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "type_mismatch.aura",
+        "Variable `value` expects `Int`, but got `Bool`"
+      ]
+    }
+  ]
+}

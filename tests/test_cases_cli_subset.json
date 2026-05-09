@@ -1,0 +1,18 @@
+{
+  "cases": [
+    {
+      "name": "subset-string-iteration",
+      "args": ["tests/cases/string_iteration_support.aura"],
+      "exit_code": 0,
+      "stdout_exact": "2\nu",
+      "stderr_exact": ""
+    },
+    {
+      "name": "subset-string-index",
+      "args": ["tests/cases/string_index_support.aura"],
+      "exit_code": 0,
+      "stdout_exact": "A\na\nu!",
+      "stderr_exact": ""
+    }
+  ]
+}

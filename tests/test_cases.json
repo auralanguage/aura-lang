@@ -1,0 +1,733 @@
+{
+  "cases": [
+    {
+      "name": "examples-basic",
+      "args": ["examples/code_syntax.aura"],
+      "exit_code": 0,
+      "stdout_contains": [
+        "Hello, Aura",
+        "77",
+        "84",
+        "14",
+        "50",
+        "e!",
+        "ello",
+        "=== Program Result ===\n21"
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "examples-modules",
+      "args": ["examples/code_test2.aura"],
+      "exit_code": 0,
+      "stdout_exact": "hello",
+      "stderr_exact": ""
+    },
+    {
+      "name": "range-and-index-loop",
+      "args": ["tests/cases/range_and_index_loop.aura"],
+      "exit_code": 0,
+      "stdout_exact": "10\n8",
+      "stderr_exact": ""
+    },
+    {
+      "name": "collection-helpers",
+      "args": ["tests/cases/collection_helpers.aura"],
+      "exit_code": 0,
+      "stdout_exact": "2\n1\n2\n0",
+      "stderr_exact": ""
+    },
+    {
+      "name": "examples-stdlib",
+      "args": ["examples/stdlib_showcase.aura"],
+      "exit_code": 0,
+      "stdout_exact": "Aura!\n>go\ntrue\ntrue\ntrue\ntrue\ntrue\ntrue\ntrue\nalpha|beta|gamma\no-k\ntrue\ntrue",
+      "stderr_exact": ""
+    },
+    {
+      "name": "stdlib-helpers",
+      "args": ["tests/cases/stdlib_helpers.aura"],
+      "exit_code": 0,
+      "stdout_exact": "Aura!\n>go\ntrue\ntrue\ntrue\ntrue\ntrue\ntrue\ntrue\nalpha|beta|gamma\no-k\ntrue\ntrue",
+      "stderr_exact": ""
+    },
+    {
+      "name": "module-struct-success",
+      "args": ["tests/cases/module_struct_success_main.aura"],
+      "exit_code": 0,
+      "stdout_exact": "7",
+      "stderr_exact": ""
+    },
+    {
+      "name": "char-support",
+      "args": ["tests/cases/char_support.aura"],
+      "exit_code": 0,
+      "stdout_exact": "true\nb\n2\nnl",
+      "stderr_exact": ""
+    },
+    {
+      "name": "module-slice-alias-success",
+      "args": ["tests/cases/module_slice_alias_success_main.aura"],
+      "exit_code": 0,
+      "stdout_exact": "15\n99\n77",
+      "stderr_exact": ""
+    },
+    {
+      "name": "string-iteration-support",
+      "args": ["tests/cases/string_iteration_support.aura"],
+      "exit_code": 0,
+      "stdout_exact": "2\nu",
+      "stderr_exact": ""
+    },
+    {
+      "name": "string-index-support",
+      "args": ["tests/cases/string_index_support.aura"],
+      "exit_code": 0,
+      "stdout_exact": "A\na\nu!",
+      "stderr_exact": ""
+    },
+    {
+      "name": "backend-parity-cpp-cfg-ssa-smoke",
+      "args": ["tests/cases/cpp_cfg_ssa_smoke.aura"],
+      "exit_code": 0,
+      "compare_cpp_backend": true,
+      "stdout_exact": "flow ok\n77\n50\n137\n=== Program Result ===\n137",
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-build-executable",
+      "args": ["build", "tests/cases/build_cli_support_main.aura", "-o", "build/generated-tests/build_cli_support.exe"],
+      "exit_code": 0,
+      "stdout_contains": [
+        "Built executable:",
+        "build_cli_support.exe",
+        "Compiler: bundled"
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-built-executable-runs",
+      "executable": "build/generated-tests/build_cli_support.exe",
+      "args": [],
+      "exit_code": 0,
+      "stdout_exact": "build ok",
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-build-runtime-relative-executable",
+      "args": ["build", "tests/cases/build_cli_runtime_relative_main.aura", "-o", "tests/runtime_build_fixture/runtime_relative.exe"],
+      "exit_code": 0,
+      "stdout_contains": [
+        "Built executable:",
+        "runtime_relative.exe",
+        "Compiler: bundled"
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-built-runtime-relative-executable-runs",
+      "executable": "tests/runtime_build_fixture/runtime_relative.exe",
+      "args": [],
+      "working_directory": "build",
+      "exit_code": 0,
+      "stdout_exact": "true\nportable-ok",
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-build-cpp-executable",
+      "args": ["build", "tests/cases/build_cli_support_main.aura", "-o", "build/generated-tests/build_cli_cpp_support.exe", "--backend", "cpp"],
+      "exit_code": 0,
+      "stdout_contains": [
+        "Built executable:",
+        "build_cli_cpp_support.exe"
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-built-cpp-executable-runs",
+      "executable": "build/generated-tests/build_cli_cpp_support.exe",
+      "args": [],
+      "exit_code": 0,
+      "stdout_exact": "build ok",
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-build-cpp-runtime-relative-executable",
+      "args": ["build", "tests/cases/build_cli_runtime_relative_main.aura", "-o", "tests/runtime_build_fixture/runtime_relative_cpp.exe", "--backend", "cpp", "--compiler", "gcc"],
+      "exit_code": 0,
+      "stdout_contains": [
+        "Built executable:",
+        "runtime_relative_cpp.exe",
+        "Backend: cpp",
+        "Compiler: gcc"
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-built-cpp-runtime-relative-executable-runs",
+      "executable": "tests/runtime_build_fixture/runtime_relative_cpp.exe",
+      "args": [],
+      "working_directory": "build",
+      "exit_code": 0,
+      "stdout_exact": "true\nportable-ok",
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-build-cpp-ssa-smoke",
+      "args": ["build", "tests/cases/cpp_cfg_ssa_smoke.aura", "-o", "build/generated-tests/cpp_cfg_ssa_smoke.exe", "--backend", "cpp"],
+      "exit_code": 0,
+      "stdout_contains": [
+        "Built executable:",
+        "cpp_cfg_ssa_smoke.exe"
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-built-cpp-ssa-smoke-runs",
+      "executable": "build/generated-tests/cpp_cfg_ssa_smoke.exe",
+      "args": [],
+      "exit_code": 0,
+      "stdout_exact": "flow ok\n77\n50\n137\n=== Program Result ===\n137",
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-check-command",
+      "args": ["check", "tests/cases/build_cli_support_lib.aura"],
+      "exit_code": 0,
+      "stdout_exact": "Check passed: tests/cases/build_cli_support_lib.aura",
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-check-type-error",
+      "args": ["check", "tests/cases/type_mismatch.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "type_mismatch.aura",
+        "Variable `value` expects `Int`, but got `Bool`"
+      ]
+    },
+    {
+      "name": "cli-check-dump-ir",
+      "args": ["check", "--dump-ir", "tests/cases/build_cli_support_lib.aura"],
+      "exit_code": 0,
+      "stdout_contains": [
+        "fn buildcli::message() -> String {",
+        "return \"build ok\";",
+        "Check passed: tests/cases/build_cli_support_lib.aura"
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-check-dump-cfg",
+      "args": ["check", "--dump-cfg", "tests/cases/build_cli_support_lib.aura"],
+      "exit_code": 0,
+      "stdout_contains": [
+        "cfg fn buildcli::message() -> String {",
+        "block0:",
+        "Check passed: tests/cases/build_cli_support_lib.aura"
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-check-dump-ir-and-cfg",
+      "args": ["check", "--dump-ir", "--dump-cfg", "tests/cases/build_cli_support_lib.aura"],
+      "exit_code": 0,
+      "stdout_contains": [
+        "fn buildcli::message() -> String {",
+        "=== CFG SSA ===",
+        "cfg fn buildcli::message() -> String {",
+        "Check passed: tests/cases/build_cli_support_lib.aura"
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-test-command",
+      "args": ["test", "--manifest", "tests/test_cases_cli_subset.json", "--executable", "build/aura.exe"],
+      "exit_code": 0,
+      "stdout_contains": [
+        "Running subset-string-iteration...",
+        "Running subset-string-index...",
+        "Passed 2 test(s)."
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-test-filter",
+      "args": ["test", "--manifest", "tests/test_cases_cli_subset.json", "--executable", "build/aura.exe", "--filter", "index"],
+      "exit_code": 0,
+      "stdout_contains": [
+        "Running subset-string-index...",
+        "Passed 1 test(s)."
+      ],
+      "stdout_not_contains": [
+        "Running subset-string-iteration..."
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-test-lowering-suite",
+      "args": ["test", "--manifest", "tests/test_cases_lowering.json", "--executable", "build/aura.exe"],
+      "exit_code": 0,
+      "stdout_contains": [
+        "Running lowering-ir-simple-function...",
+        "Running lowering-cfg-simple-function...",
+        "Running lowering-ir-cfg-control-flow...",
+        "Running lowering-module-method-ir-cfg...",
+        "Running lowering-string-iteration-cfg...",
+        "Running lowering-slice-alias-cfg...",
+        "Running lowering-cfg-optimization-showcase...",
+        "Running lowering-cfg-array-builtin-fold-showcase...",
+        "Running lowering-cfg-block-param-propagation-showcase...",
+        "Running lowering-cfg-collection-data-flow-showcase...",
+        "Running lowering-cfg-loop-collection-data-flow-showcase...",
+        "Running lowering-cfg-array-index-fold-showcase...",
+        "Running lowering-type-error-surface...",
+        "Passed 13 test(s)."
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-test-verifier-suite",
+      "args": ["test", "--manifest", "tests/test_cases_verifier.json", "--executable", "build/aura.exe"],
+      "exit_code": 0,
+      "stdout_contains": [
+        "Running verifier-cfg-jump-arg-count...",
+        "Running verifier-cfg-jump-arg-type...",
+        "Running verifier-cfg-undefined-value...",
+        "Running verifier-cfg-branch-condition...",
+        "Running verifier-ir-for-element-type...",
+        "Running verifier-ir-builtin-tag...",
+        "Passed 6 test(s)."
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-project-run-default",
+      "args": ["run"],
+      "working_directory": "tests/project_fixture",
+      "exit_code": 0,
+      "stdout_exact": "Hello from fixture-app!",
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-project-check-default",
+      "args": ["check"],
+      "working_directory": "tests/project_fixture",
+      "exit_code": 0,
+      "stdout_exact": "Check passed: src/main.aura",
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-project-test-default",
+      "args": ["test"],
+      "working_directory": "tests/project_fixture",
+      "exit_code": 0,
+      "stdout_contains": [
+        "Running project-main...",
+        "Passed 1 test(s)."
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-project-build-default",
+      "args": ["build"],
+      "working_directory": "tests/project_fixture",
+      "exit_code": 0,
+      "stdout_contains": [
+        "Built executable:",
+        "fixture-app-cpp.exe",
+        "Backend: cpp",
+        "Compiler: gcc"
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-project-built-executable-runs",
+      "executable": "build/fixture-app-cpp.exe",
+      "working_directory": "tests/project_fixture",
+      "args": [],
+      "exit_code": 0,
+      "stdout_exact": "Hello from fixture-app!",
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-project-build-release-profile",
+      "args": ["build", "--profile", "release"],
+      "working_directory": "tests/project_fixture",
+      "exit_code": 0,
+      "stdout_contains": [
+        "Built executable:",
+        "fixture-app-release.exe",
+        "Backend: cpp",
+        "Compiler: gcc",
+        "Profile: release"
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-project-built-release-executable-runs",
+      "executable": "build/fixture-app-release.exe",
+      "working_directory": "tests/project_fixture",
+      "args": [],
+      "exit_code": 0,
+      "stdout_exact": "Hello from fixture-app!",
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-new-project",
+      "args": ["new", "build/generated-tests/cli_new_${pid}"],
+      "exit_code": 0,
+      "stdout_contains": [
+        "Created Aura project:",
+        "cli_new_${pid}"
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-new-project-run",
+      "args": ["run"],
+      "working_directory": "build/generated-tests/cli_new_${pid}",
+      "exit_code": 0,
+      "stdout_exact": "Hello from cli_new_${pid}!",
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-new-project-test",
+      "args": ["test"],
+      "working_directory": "build/generated-tests/cli_new_${pid}",
+      "exit_code": 0,
+      "stdout_contains": [
+        "Running project-main...",
+        "Passed 1 test(s)."
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-new-project-build",
+      "args": ["build"],
+      "working_directory": "build/generated-tests/cli_new_${pid}",
+      "exit_code": 0,
+      "stdout_contains": [
+        "Built executable:",
+        "cli_new_${pid}.exe"
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-new-project-built-executable-runs",
+      "executable": "build/cli_new_${pid}.exe",
+      "working_directory": "build/generated-tests/cli_new_${pid}",
+      "args": [],
+      "exit_code": 0,
+      "stdout_exact": "Hello from cli_new_${pid}!",
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-new-project-build-release",
+      "args": ["build", "--profile", "release"],
+      "working_directory": "build/generated-tests/cli_new_${pid}",
+      "exit_code": 0,
+      "stdout_contains": [
+        "Built executable:",
+        "cli_new_${pid}-release.exe",
+        "Compiler: bundled",
+        "Profile: release"
+      ],
+      "stderr_exact": ""
+    },
+    {
+      "name": "cli-new-project-built-release-executable-runs",
+      "executable": "build/cli_new_${pid}-release.exe",
+      "working_directory": "build/generated-tests/cli_new_${pid}",
+      "args": [],
+      "exit_code": 0,
+      "stdout_exact": "Hello from cli_new_${pid}!",
+      "stderr_exact": ""
+    },
+    {
+      "name": "string-slice-support",
+      "args": ["tests/cases/string_slice_support.aura"],
+      "exit_code": 0,
+      "stdout_exact": "ur\nAu\nra\nr\ntrue",
+      "stderr_exact": ""
+    },
+    {
+      "name": "string-char-equality",
+      "args": ["tests/cases/string_char_equality.aura"],
+      "exit_code": 0,
+      "stdout_exact": "true\ntrue\ntrue\ntrue",
+      "stderr_exact": ""
+    },
+    {
+      "name": "parse-error-location",
+      "args": ["tests/cases/parse_missing_semicolon.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "parse_missing_semicolon.aura",
+        "Expected `;`"
+      ]
+    },
+    {
+      "name": "type-error-location",
+      "args": ["tests/cases/type_mismatch.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "type_mismatch.aura",
+        "Variable `value` expects `Int`, but got `Bool`"
+      ]
+    },
+    {
+      "name": "if-scope-leak-error",
+      "args": ["tests/cases/if_scope_leak_error.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "if_scope_leak_error.aura",
+        "Undefined variable: hidden"
+      ]
+    },
+    {
+      "name": "char-type-mismatch",
+      "args": ["tests/cases/char_type_mismatch.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "char_type_mismatch.aura",
+        "Variable `letter` expects `Char`, but got `String`"
+      ]
+    },
+    {
+      "name": "string-index-type-error",
+      "args": ["tests/cases/string_index_type_error.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "string_index_type_error.aura",
+        "String indices must be Int"
+      ]
+    },
+    {
+      "name": "string-slice-type-error",
+      "args": ["tests/cases/string_slice_type_error.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "string_slice_type_error.aura",
+        "String slice start index must be Int"
+      ]
+    },
+    {
+      "name": "char-plus-char-error",
+      "args": ["tests/cases/char_plus_char_error.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "char_plus_char_error.aura",
+        "`+` only accepts `Int + Int`, `String + String`, `String + Char`, or `Char + String`"
+      ]
+    },
+    {
+      "name": "range-type-error",
+      "args": ["tests/cases/range_type_error.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "range_type_error.aura",
+        "Range bounds must both be Int"
+      ]
+    },
+    {
+      "name": "char-literal-width-error",
+      "args": ["tests/cases/char_literal_width_error.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "char_literal_width_error.aura",
+        "Char literals must contain exactly one character"
+      ]
+    },
+    {
+      "name": "contains-type-error",
+      "args": ["tests/cases/contains_type_error.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "contains_type_error.aura",
+        "Function `contains` expects `String` or `Char` for argument #2 when argument #1 is `String`"
+      ]
+    },
+    {
+      "name": "contains-char-collection-type-error",
+      "args": ["tests/cases/contains_char_collection_type_error.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "contains_char_collection_type_error.aura",
+        "Function `contains` expects `Char` for argument #2 when argument #1 is `[Char]`"
+      ]
+    },
+    {
+      "name": "join-type-error",
+      "args": ["tests/cases/join_type_error.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "join_type_error.aura",
+        "Function `join` expects `[String]` or `[Char]` as argument #1"
+      ]
+    },
+    {
+      "name": "file-exists-type-error",
+      "args": ["tests/cases/file_exists_type_error.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "file_exists_type_error.aura",
+        "Function `file_exists` expects `String` as argument #1"
+      ]
+    },
+    {
+      "name": "for-non-slice-type-error",
+      "args": ["tests/cases/for_non_slice_type_error.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "for_non_slice_type_error.aura",
+        "A for loop requires a slice value or String"
+      ]
+    },
+    {
+      "name": "empty-array-literal-error",
+      "args": ["tests/cases/empty_array_literal_error.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "empty_array_literal_error.aura",
+        "Empty array literals are not supported yet"
+      ]
+    },
+    {
+      "name": "struct-missing-field-error",
+      "args": ["tests/cases/struct_missing_field_error.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "struct_missing_field_error.aura",
+        "Missing field `right` in `Pair` literal"
+      ]
+    },
+    {
+      "name": "method-self-name-error",
+      "args": ["tests/cases/method_self_name_error.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "method_self_name_error.aura",
+        "Method `Counter::bump` must use `self` as its first parameter name"
+      ]
+    },
+    {
+      "name": "missing-return-path-error",
+      "args": ["tests/cases/missing_return_path_error.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "missing_return_path_error.aura",
+        "Function `choose` does not return `Int` on every path"
+      ]
+    },
+    {
+      "name": "runtime-error-location",
+      "args": ["tests/cases/runtime_out_of_bounds.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "runtime_out_of_bounds.aura",
+        "Slice index out of bounds"
+      ]
+    },
+    {
+      "name": "string-index-out-of-bounds",
+      "args": ["tests/cases/string_index_out_of_bounds.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "string_index_out_of_bounds.aura",
+        "String index out of bounds"
+      ]
+    },
+    {
+      "name": "string-slice-out-of-bounds",
+      "args": ["tests/cases/string_slice_out_of_bounds.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "string_slice_out_of_bounds.aura",
+        "String range out of bounds"
+      ]
+    },
+    {
+      "name": "string-index-assignment-error",
+      "args": ["tests/cases/string_index_assignment_error.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "string_index_assignment_error.aura",
+        "String index assignment is not supported"
+      ]
+    },
+    {
+      "name": "read-text-missing-file",
+      "args": ["tests/cases/read_text_missing_file.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "read_text_missing_file.aura",
+        "Function `read_text` could not open file"
+      ]
+    },
+    {
+      "name": "mutation-with-active-slice",
+      "args": ["tests/cases/mutation_with_active_slice.aura"],
+      "exit_code": 1,
+      "stdout_exact": "2",
+      "stderr_contains": [
+        "mutation_with_active_slice.aura",
+        "Function `insert` cannot mutate an array while slice views exist"
+      ]
+    },
+    {
+      "name": "module-slice-alias-resize-error",
+      "args": ["tests/cases/module_slice_alias_resize_error_main.aura"],
+      "exit_code": 1,
+      "stdout_exact": "2",
+      "stderr_contains": [
+        "module_slice_alias_resize_error_main.aura",
+        "Function `push` cannot mutate an array while slice views exist"
+      ]
+    },
+    {
+      "name": "import-error-location",
+      "args": ["tests/cases/import_missing_file.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "import_missing_file.aura",
+        "Imported file was not found: missing_file.aura"
+      ]
+    },
+    {
+      "name": "import-no-module-error",
+      "args": ["tests/cases/import_no_module_main.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "import_no_module_lib.aura",
+        "Imported files must declare `module name;` before exporting symbols"
+      ]
+    }
+  ]
+}

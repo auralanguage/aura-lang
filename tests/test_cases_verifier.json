@@ -1,0 +1,76 @@
+{
+  "cases": [
+    {
+      "name": "verifier-cfg-jump-arg-count",
+      "kind": "verifier",
+      "verifier": "cfg",
+      "scenario": "cfg_jump_arg_count_mismatch",
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "<verifier:cfg_jump_arg_count_mismatch>",
+        "CFG verifier found a jump with the wrong block-argument count"
+      ]
+    },
+    {
+      "name": "verifier-cfg-jump-arg-type",
+      "kind": "verifier",
+      "verifier": "cfg",
+      "scenario": "cfg_jump_arg_type_mismatch",
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "<verifier:cfg_jump_arg_type_mismatch>",
+        "CFG verifier found a jump with the wrong block-argument types"
+      ]
+    },
+    {
+      "name": "verifier-cfg-undefined-value",
+      "kind": "verifier",
+      "verifier": "cfg",
+      "scenario": "cfg_undefined_value_use",
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "<verifier:cfg_undefined_value_use>",
+        "CFG verifier found a use of undefined value %99"
+      ]
+    },
+    {
+      "name": "verifier-cfg-branch-condition",
+      "kind": "verifier",
+      "verifier": "cfg",
+      "scenario": "cfg_branch_condition_not_bool",
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "<verifier:cfg_branch_condition_not_bool>",
+        "CFG verifier requires branch conditions to be `Bool`"
+      ]
+    },
+    {
+      "name": "verifier-ir-for-element-type",
+      "kind": "verifier",
+      "verifier": "ir",
+      "scenario": "ir_for_element_type_mismatch",
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "<verifier:ir_for_element_type_mismatch>",
+        "IR verifier found a mismatched `for` element type"
+      ]
+    },
+    {
+      "name": "verifier-ir-builtin-tag",
+      "kind": "verifier",
+      "verifier": "ir",
+      "scenario": "ir_builtin_call_user_tag",
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "<verifier:ir_builtin_call_user_tag>",
+        "IR verifier found a user call carrying a builtin tag"
+      ]
+    }
+  ]
+}
