@@ -40,6 +40,13 @@ The language core is real and usable for experiments, but the syntax, standard l
 
 ## Quick Start
 
+### Example Code
+```aura
+fn main() {
+    print("Hello, World!");
+}
+```
+
 ### Use A Prebuilt Release On Windows
 
 Download one of these from GitHub Releases:
