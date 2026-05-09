@@ -1,0 +1,9 @@
+/*
+Code test 2
+*/
+
+import "greetings.aura";
+
+fn main() {
+    greetings::greet();
+}

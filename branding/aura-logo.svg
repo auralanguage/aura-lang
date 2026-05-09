@@ -1,0 +1,34 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="72" y1="48" x2="440" y2="464" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#111827"/>
+      <stop offset="1" stop-color="#020617"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="132" y1="104" x2="392" y2="382" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#67E8F9"/>
+      <stop offset="0.6" stop-color="#34D399"/>
+      <stop offset="1" stop-color="#F59E0B"/>
+    </linearGradient>
+    <filter id="softGlow" x="84" y="84" width="344" height="344" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+  </defs>
+
+  <rect x="24" y="24" width="464" height="464" rx="112" fill="url(#bg)"/>
+
+  <circle cx="256" cy="256" r="136" stroke="#123047" stroke-width="18" opacity="0.9"/>
+  <path d="M138 220C151 157 201 122 256 122C314 122 367 159 382 219" stroke="#1E3A5F" stroke-width="18" stroke-linecap="round" opacity="0.55"/>
+
+  <g filter="url(#softGlow)" opacity="0.55">
+    <path d="M130 260C130 183.785 191.785 122 268 122C319.893 122 364.597 150.643 388 193.017" stroke="url(#ring)" stroke-width="28" stroke-linecap="round"/>
+  </g>
+
+  <path d="M130 260C130 183.785 191.785 122 268 122C319.893 122 364.597 150.643 388 193.017" stroke="url(#ring)" stroke-width="28" stroke-linecap="round"/>
+  <path d="M391 224C395.568 237.378 398 251.719 398 266.628C398 343.077 336.449 405.628 260 405.628C211.485 405.628 168.803 380.392 144.311 342.304" stroke="#F59E0B" stroke-width="18" stroke-linecap="round" opacity="0.92"/>
+
+  <path d="M186 346L256 160L326 346" stroke="#F8FAFC" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M214 278H298" stroke="#F8FAFC" stroke-width="28" stroke-linecap="round"/>
+
+  <circle cx="388" cy="193" r="16" fill="#F59E0B"/>
+  <circle cx="388" cy="193" r="30" stroke="#F59E0B" stroke-opacity="0.24" stroke-width="10"/>
+</svg>

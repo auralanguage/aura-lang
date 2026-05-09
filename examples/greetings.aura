@@ -1,0 +1,7 @@
+module greetings;
+
+import "messages.aura";
+
+fn greet() {
+    print(messages::message());
+}

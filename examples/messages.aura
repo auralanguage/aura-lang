@@ -1,0 +1,5 @@
+module messages;
+
+fn message() -> String {
+    return "hello";
+}
