@@ -1,0 +1,1 @@
+Aura error: [C:\Users\pvpor\OneDrive\Masaüstü\mains\aura_lang\tests\project_fixture\src\main.aura:line 3, column 1] Expected `;`, but found `}`

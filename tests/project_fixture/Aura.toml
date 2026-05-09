@@ -1,0 +1,14 @@
+name = "fixture-app"
+version = "0.1.0"
+entry = "src/main.aura"
+
+[build]
+backend = "cpp"
+compiler = "gcc"
+output = "build/fixture-app-cpp.exe"
+
+[build.release]
+output = "build/fixture-app-release.exe"
+
+[test]
+manifest = "tests/project_cases.json"

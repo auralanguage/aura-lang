@@ -1,0 +1,11 @@
+{
+  "cases": [
+    {
+      "name": "project-main",
+      "args": ["src/main.aura"],
+      "exit_code": 0,
+      "stdout_exact": "Hello from fixture-app!",
+      "stderr_exact": ""
+    }
+  ]
+}
