@@ -41,6 +41,7 @@ The language core is real and usable for experiments, but the syntax, standard l
 ## Quick Start
 
 ### Example Code
+![Example Code](branding/aura_example_structs.png)
 ```aura
 fn main() {
     print("Hello, World!");
