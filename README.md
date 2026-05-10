@@ -85,6 +85,7 @@ Important:
 - **[Quick Start](docs/QUICK_START.md)** - Short build and run commands
 - **[Module System](docs/MODULE_SYSTEM.md)** - Import resolution, file-based modules, and project organization
 - **[Contributing](CONTRIBUTING.md)** - Development setup, coding standards, and contribution guidelines
+- **[VSCode Extension](https://github.com/auralanguage/vscode-syntax-highlights)** - Syntax highlighting and editor support for Aura
 
 ## Example Commands
 
