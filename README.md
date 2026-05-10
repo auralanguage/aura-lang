@@ -78,6 +78,14 @@ Important:
 .\build\aura.exe test --manifest tests/test_cases.json --executable build/aura.exe
 ```
 
+## Documentation
+
+- **[Language Specification](docs/LANGUAGE_SPEC.md)** - Formal syntax, type system, and builtin functions
+- **[Architecture Overview](docs/ARCHITECTURE.md)** - Compiler pipeline, backends, and intermediate representations
+- **[Quick Start](docs/QUICK_START.md)** - Short build and run commands
+- **[Module System](docs/MODULE_SYSTEM.md)** - Import resolution, file-based modules, and project organization
+- **[Contributing](CONTRIBUTING.md)** - Development setup, coding standards, and contribution guidelines
+
 ## Example Commands
 
 Run a file:
