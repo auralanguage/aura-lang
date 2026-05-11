@@ -853,6 +853,80 @@ TypeInfo TypeChecker::CheckExpression(const Expr* expr, TypeScopeStack& scopes) 
                 return {TypeKind::String, ""};
             }
 
+            if (callee->name == "abs") {
+                if (call->arguments.size() != 1) {
+                    throw BuildLocationError(callee->location, "Function `abs` expects 1 argument");
+                }
+
+                const TypeInfo value_type = CheckExpression(call->arguments[0].get(), scopes);
+                if (value_type != TypeInfo{TypeKind::Int, ""}) {
+                    throw BuildLocationError(call->arguments[0]->location,
+                                             "Function `abs` expects `Int` as argument #1");
+                }
+
+                return {TypeKind::Int, ""};
+            }
+
+            if (callee->name == "min") {
+                if (call->arguments.size() != 2) {
+                    throw BuildLocationError(callee->location, "Function `min` expects 2 arguments");
+                }
+
+                const TypeInfo left_type = CheckExpression(call->arguments[0].get(), scopes);
+                if (left_type != TypeInfo{TypeKind::Int, ""}) {
+                    throw BuildLocationError(call->arguments[0]->location,
+                                             "Function `min` expects `Int` as argument #1");
+                }
+
+                const TypeInfo right_type = CheckExpression(call->arguments[1].get(), scopes);
+                if (right_type != TypeInfo{TypeKind::Int, ""}) {
+                    throw BuildLocationError(call->arguments[1]->location,
+                                             "Function `min` expects `Int` as argument #2");
+                }
+
+                return {TypeKind::Int, ""};
+            }
+
+            if (callee->name == "max") {
+                if (call->arguments.size() != 2) {
+                    throw BuildLocationError(callee->location, "Function `max` expects 2 arguments");
+                }
+
+                const TypeInfo left_type = CheckExpression(call->arguments[0].get(), scopes);
+                if (left_type != TypeInfo{TypeKind::Int, ""}) {
+                    throw BuildLocationError(call->arguments[0]->location,
+                                             "Function `max` expects `Int` as argument #1");
+                }
+
+                const TypeInfo right_type = CheckExpression(call->arguments[1].get(), scopes);
+                if (right_type != TypeInfo{TypeKind::Int, ""}) {
+                    throw BuildLocationError(call->arguments[1]->location,
+                                             "Function `max` expects `Int` as argument #2");
+                }
+
+                return {TypeKind::Int, ""};
+            }
+
+            if (callee->name == "pow") {
+                if (call->arguments.size() != 2) {
+                    throw BuildLocationError(callee->location, "Function `pow` expects 2 arguments");
+                }
+
+                const TypeInfo base_type = CheckExpression(call->arguments[0].get(), scopes);
+                if (base_type != TypeInfo{TypeKind::Int, ""}) {
+                    throw BuildLocationError(call->arguments[0]->location,
+                                             "Function `pow` expects `Int` as argument #1 (base)");
+                }
+
+                const TypeInfo exp_type = CheckExpression(call->arguments[1].get(), scopes);
+                if (exp_type != TypeInfo{TypeKind::Int, ""}) {
+                    throw BuildLocationError(call->arguments[1]->location,
+                                             "Function `pow` expects `Int` as argument #2 (exponent)");
+                }
+
+                return {TypeKind::Int, ""};
+            }
+
             const std::string resolved_name = ResolveFunctionName(callee->name);
             const auto signature_it = function_signatures_.find(resolved_name);
             if (signature_it == function_signatures_.end()) {

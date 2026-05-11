@@ -213,6 +213,30 @@ void VerifyBuiltinCall(const SourceLocation& location,
             throw BuildLocationError(location, "Builtin `read_text` verifier check failed");
         }
         return;
+    case IrBuiltinKind::Abs:
+        if (argument_types.size() != 1 || argument_types[0] != TypeInfo{TypeKind::Int, ""} ||
+            result_type != TypeInfo{TypeKind::Int, ""}) {
+            throw BuildLocationError(location, "Builtin `abs` verifier check failed");
+        }
+        return;
+    case IrBuiltinKind::Min:
+        if (argument_types.size() != 2 || argument_types[0] != TypeInfo{TypeKind::Int, ""} ||
+            argument_types[1] != TypeInfo{TypeKind::Int, ""} || result_type != TypeInfo{TypeKind::Int, ""}) {
+            throw BuildLocationError(location, "Builtin `min` verifier check failed");
+        }
+        return;
+    case IrBuiltinKind::Max:
+        if (argument_types.size() != 2 || argument_types[0] != TypeInfo{TypeKind::Int, ""} ||
+            argument_types[1] != TypeInfo{TypeKind::Int, ""} || result_type != TypeInfo{TypeKind::Int, ""}) {
+            throw BuildLocationError(location, "Builtin `max` verifier check failed");
+        }
+        return;
+    case IrBuiltinKind::Pow:
+        if (argument_types.size() != 2 || argument_types[0] != TypeInfo{TypeKind::Int, ""} ||
+            argument_types[1] != TypeInfo{TypeKind::Int, ""} || result_type != TypeInfo{TypeKind::Int, ""}) {
+            throw BuildLocationError(location, "Builtin `pow` verifier check failed");
+        }
+        return;
     case IrBuiltinKind::None:
         throw BuildLocationError(location, "Builtin call is missing a builtin kind");
     }

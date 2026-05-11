@@ -34,7 +34,11 @@ enum class IrBuiltinKind {
     EndsWith,
     Join,
     FileExists,
-    ReadText
+    ReadText,
+    Abs,
+    Min,
+    Max,
+    Pow
 };
 
 struct IrLiteralExpr : IrExpr {

@@ -351,6 +351,17 @@ class CfgCppBackendEmitter {
             case IrBuiltinKind::ReadText:
                 return "AuraBuiltinReadText(" + ValueVarName(instruction.inputs.at(0)) + ", \"" +
                        EscapeForCppString(instruction.location.file_path) + "\")";
+            case IrBuiltinKind::Abs:
+                return "AuraBuiltinAbs(" + ValueVarName(instruction.inputs.at(0)) + ")";
+            case IrBuiltinKind::Min:
+                return "AuraBuiltinMin(" + ValueVarName(instruction.inputs.at(0)) + ", " +
+                       ValueVarName(instruction.inputs.at(1)) + ")";
+            case IrBuiltinKind::Max:
+                return "AuraBuiltinMax(" + ValueVarName(instruction.inputs.at(0)) + ", " +
+                       ValueVarName(instruction.inputs.at(1)) + ")";
+            case IrBuiltinKind::Pow:
+                return "AuraBuiltinPow(" + ValueVarName(instruction.inputs.at(0)) + ", " +
+                       ValueVarName(instruction.inputs.at(1)) + ")";
             case IrBuiltinKind::None:
                 break;
             }

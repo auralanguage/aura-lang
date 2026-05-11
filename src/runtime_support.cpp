@@ -527,3 +527,33 @@ Value AuraBuiltinReadText(const Value& path_value, const std::string& source_pat
 
     return MakeStringValue(AuraReadTextFile(AuraResolveRuntimePath(StringToString(**path_string), source_path)));
 }
+
+Value AuraBuiltinAbs(const Value& value) {
+    const long long x = AuraExpectInteger(value, "Function `abs` argument #1");
+    return x < 0 ? -x : x;
+}
+
+Value AuraBuiltinMin(const Value& a, const Value& b) {
+    const long long x = AuraExpectInteger(a, "Function `min` argument #1");
+    const long long y = AuraExpectInteger(b, "Function `min` argument #2");
+    return x < y ? x : y;
+}
+
+Value AuraBuiltinMax(const Value& a, const Value& b) {
+    const long long x = AuraExpectInteger(a, "Function `max` argument #1");
+    const long long y = AuraExpectInteger(b, "Function `max` argument #2");
+    return x > y ? x : y;
+}
+
+Value AuraBuiltinPow(const Value& base, const Value& exp) {
+    const long long b = AuraExpectInteger(base, "Function `pow` argument #1");
+    const long long e = AuraExpectInteger(exp, "Function `pow` argument #2");
+    if (e < 0) {
+        throw AuraError("Function `pow` exponent must be non-negative");
+    }
+    long long result = 1;
+    for (long long i = 0; i < e; ++i) {
+        result *= b;
+    }
+    return result;
+}

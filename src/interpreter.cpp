@@ -834,6 +834,54 @@ Value Interpreter::Evaluate(const Expr* expr,
                     return MakeStringValue(ReadTextFile(ResolveRuntimePath(StringToString(**path_value), call->location)));
                 }
 
+                if (callee->name == "abs") {
+                    if (arguments.size() != 1) {
+                        throw AuraError("Function `abs` expects 1 argument");
+                    }
+
+                    const long long value = ExpectInteger(arguments[0], "Function `abs` argument #1");
+                    return value < 0 ? -value : value;
+                }
+
+                if (callee->name == "min") {
+                    if (arguments.size() != 2) {
+                        throw AuraError("Function `min` expects 2 arguments");
+                    }
+
+                    const long long left = ExpectInteger(arguments[0], "Function `min` argument #1");
+                    const long long right = ExpectInteger(arguments[1], "Function `min` argument #2");
+                    return left < right ? left : right;
+                }
+
+                if (callee->name == "max") {
+                    if (arguments.size() != 2) {
+                        throw AuraError("Function `max` expects 2 arguments");
+                    }
+
+                    const long long left = ExpectInteger(arguments[0], "Function `max` argument #1");
+                    const long long right = ExpectInteger(arguments[1], "Function `max` argument #2");
+                    return left > right ? left : right;
+                }
+
+                if (callee->name == "pow") {
+                    if (arguments.size() != 2) {
+                        throw AuraError("Function `pow` expects 2 arguments");
+                    }
+
+                    const long long base = ExpectInteger(arguments[0], "Function `pow` argument #1 (base)");
+                    const long long exponent = ExpectInteger(arguments[1], "Function `pow` argument #2 (exponent)");
+                    
+                    if (exponent < 0) {
+                        throw AuraError("Function `pow` does not support negative exponents");
+                    }
+
+                    long long result = 1;
+                    for (long long i = 0; i < exponent; ++i) {
+                        result *= base;
+                    }
+                    return result;
+                }
+
                 return ExecuteFunction(ResolveFunctionName(callee->name, current_module_name), arguments);
             }
 

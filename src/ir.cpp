@@ -47,6 +47,18 @@ IrBuiltinKind GetBuiltinKind(const std::string& name) {
     if (name == "read_text") {
         return IrBuiltinKind::ReadText;
     }
+    if (name == "abs") {
+        return IrBuiltinKind::Abs;
+    }
+    if (name == "min") {
+        return IrBuiltinKind::Min;
+    }
+    if (name == "max") {
+        return IrBuiltinKind::Max;
+    }
+    if (name == "pow") {
+        return IrBuiltinKind::Pow;
+    }
     return IrBuiltinKind::None;
 }
 
