@@ -1,0 +1,5 @@
+module texts;
+
+struct Texts {
+    text: String
+}

@@ -1,0 +1,24 @@
+import "importtest/texts.aura";
+
+/*struct Aura {
+    version: Int,
+    latest: Int,
+
+    fn check_version(self: Aura, version: Int) -> Bool {
+        if self.version == version {
+            return false; // no update needed
+        }
+        if version > self.version {
+            return true; // new version available
+        }
+        if version < self.version {
+            return false; // client version is too new
+        }
+        return false;
+    }
+} */
+
+fn main() {
+    let text = texts::Texts { text: "Hello World!" };
+    print(text.text);
+}
