@@ -301,6 +301,13 @@ for index, ch in "hello" {
 ### I/O Operations
 - `print(value: T) -> Unit` - Print value to stdout
 
+### Math Operations
+- `abs(value: Int) -> Int` - Absolute value
+- `min(a: Int, b: Int) -> Int` - Minimum of two integers
+- `max(a: Int, b: Int) -> Int` - Maximum of two integers
+- `pow(base: Int, exp: Int) -> Int` - Integer exponentiation (base raised to power exp)
+  - Raises error if exponent is negative
+
 ## Examples
 
 ### Hello World
