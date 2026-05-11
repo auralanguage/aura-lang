@@ -31,7 +31,7 @@ void ValidateStringView(const StringValue& string_value) {
 std::size_t ResolveStringIndex(const StringValue& string_value, std::size_t index) {
     ValidateStringView(string_value);
     if (index >= string_value.length) {
-        throw AuraError("String index out of bounds");
+        throw AuraError("String index out of bounds (valid range: 0..length-1)");
     }
 
     return string_value.start + index;
@@ -55,7 +55,7 @@ void ValidateArrayView(const ArrayValue& array) {
 std::size_t ResolveArrayIndex(const ArrayValue& array, std::size_t index) {
     ValidateArrayView(array);
     if (index >= array.length) {
-        throw AuraError("Slice index out of bounds");
+        throw AuraError("Slice index out of bounds (valid range: 0..length-1)");
     }
 
     return array.start + index;
@@ -72,11 +72,10 @@ AuraError::AuraError(const std::string& message) : std::runtime_error(message) {
 
 AuraError BuildLocationError(const SourceLocation& location, const std::string& message) {
     std::ostringstream buffer;
-    buffer << "[";
     if (!location.file_path.empty()) {
         buffer << location.file_path << ':';
     }
-    buffer << "line " << location.line << ", column " << location.column << "] " << message;
+    buffer << location.line << ':' << location.column << ": error: " << message;
     return AuraError(buffer.str());
 }
 
@@ -276,7 +275,7 @@ StringValuePtr MakeStringSlice(const StringValuePtr& string_value, std::size_t s
 
     const std::size_t string_length = StringLength(*string_value);
     if (start > end || end > string_length) {
-        throw AuraError("String range out of bounds");
+        throw AuraError("String slice range out of bounds (valid range: 0..length)");
     }
 
     auto slice_value = std::make_shared<StringValue>();
@@ -315,7 +314,7 @@ ArrayValuePtr MakeArraySlice(const ArrayValuePtr& array, std::size_t start, std:
 
     const std::size_t array_length = ArrayLength(*array);
     if (start > end || end > array_length) {
-        throw AuraError("Slice range out of bounds");
+        throw AuraError("Slice range out of bounds (valid range: 0..length)");
     }
 
     auto slice_value = std::make_shared<ArrayValue>();
