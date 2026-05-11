@@ -1,0 +1,27 @@
+// Math 
+fn main() {
+    let x = -42;
+    let abs_x = abs(x);
+    print("abs(-42) = ");
+    print(abs_x);
+
+    let min_result = min(10, 5);
+    print("min(10, 5) = ");
+    print(min_result);
+
+    let max_result = max(10, 5);
+    print("max(10, 5) = ");
+    print(max_result);
+
+    let pow_result = pow(2, 8);
+    print("pow(2, 8) = ");
+    print(pow_result);
+
+    let powe = pow(3, 4);
+    print("pow(3, 4) = ");
+    print(powe);
+
+    let result = abs(min(-5, -10));
+    print("abs(min(-5, -10)) = ");
+    print(result);
+}
