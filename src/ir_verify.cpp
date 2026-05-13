@@ -82,6 +82,12 @@ class FunctionTable {
         AddBuiltin("join", {}, {TypeKind::String, ""});
         AddBuiltin("file_exists", {}, {TypeKind::Bool, ""});
         AddBuiltin("read_text", {}, {TypeKind::String, ""});
+        AddBuiltin("write_text", {}, {TypeKind::Unit, ""});
+        AddBuiltin("append_text", {}, {TypeKind::Unit, ""});
+        AddBuiltin("abs", {}, {TypeKind::Int, ""});
+        AddBuiltin("min", {}, {TypeKind::Int, ""});
+        AddBuiltin("max", {}, {TypeKind::Int, ""});
+        AddBuiltin("pow", {}, {TypeKind::Int, ""});
     }
 
     void AddUser(const SourceLocation& location,
@@ -211,6 +217,14 @@ void VerifyBuiltinCall(const SourceLocation& location,
         if (argument_types.size() != 1 || argument_types[0] != TypeInfo{TypeKind::String, ""} ||
             result_type != TypeInfo{TypeKind::String, ""}) {
             throw BuildLocationError(location, "Builtin `read_text` verifier check failed");
+        }
+        return;
+    case IrBuiltinKind::WriteText:
+    case IrBuiltinKind::AppendText:
+        if (argument_types.size() != 2 || argument_types[0] != TypeInfo{TypeKind::String, ""} ||
+            argument_types[1] != TypeInfo{TypeKind::String, ""} ||
+            result_type != TypeInfo{TypeKind::Unit, ""}) {
+            throw BuildLocationError(location, "Builtin `" + callee_name + "` verifier check failed");
         }
         return;
     case IrBuiltinKind::Abs:

@@ -55,6 +55,26 @@ std::string AuraReadTextFile(const fs::path& path) {
     return buffer.str();
 }
 
+void AuraWriteTextFile(const fs::path& path, const std::string& text, bool append) {
+    std::error_code error_code;
+    const fs::path parent = path.parent_path();
+    if (!parent.empty()) {
+        fs::create_directories(parent, error_code);
+        if (error_code) {
+            throw AuraError("Function `" + std::string(append ? "append_text" : "write_text") +
+                            "` could not create parent directories: " + path.string());
+        }
+    }
+
+    const std::ios::openmode mode = std::ios::out | std::ios::binary | (append ? std::ios::app : std::ios::trunc);
+    std::ofstream output(path, mode);
+    if (!output.is_open()) {
+        throw AuraError("Function `" + std::string(append ? "append_text" : "write_text") +
+                        "` could not open file: " + path.string());
+    }
+    output << text;
+}
+
 fs::path AuraResolveRuntimePath(const std::string& raw_path, const std::string& source_path) {
     fs::path path(raw_path);
     if (path.is_absolute()) {
@@ -526,6 +546,40 @@ Value AuraBuiltinReadText(const Value& path_value, const std::string& source_pat
     }
 
     return MakeStringValue(AuraReadTextFile(AuraResolveRuntimePath(StringToString(**path_string), source_path)));
+}
+
+Value AuraBuiltinWriteText(const Value& path_value, const Value& text_value, const std::string& source_path) {
+    const auto* path_string = std::get_if<StringValuePtr>(&path_value);
+    if (path_string == nullptr) {
+        throw AuraError("Function `write_text` expects `String` as argument #1");
+    }
+
+    const auto* text_string = std::get_if<StringValuePtr>(&text_value);
+    if (text_string == nullptr) {
+        throw AuraError("Function `write_text` expects `String` as argument #2");
+    }
+
+    AuraWriteTextFile(AuraResolveRuntimePath(StringToString(**path_string), source_path),
+                      StringToString(**text_string),
+                      false);
+    return std::monostate{};
+}
+
+Value AuraBuiltinAppendText(const Value& path_value, const Value& text_value, const std::string& source_path) {
+    const auto* path_string = std::get_if<StringValuePtr>(&path_value);
+    if (path_string == nullptr) {
+        throw AuraError("Function `append_text` expects `String` as argument #1");
+    }
+
+    const auto* text_string = std::get_if<StringValuePtr>(&text_value);
+    if (text_string == nullptr) {
+        throw AuraError("Function `append_text` expects `String` as argument #2");
+    }
+
+    AuraWriteTextFile(AuraResolveRuntimePath(StringToString(**path_string), source_path),
+                      StringToString(**text_string),
+                      true);
+    return std::monostate{};
 }
 
 Value AuraBuiltinAbs(const Value& value) {

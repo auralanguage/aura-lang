@@ -297,6 +297,8 @@ for index, ch in "hello" {
 ### File Operations
 - `file_exists(path: String) -> Bool` - Check if file exists
 - `read_text(path: String) -> String` - Read entire file as string
+- `write_text(path: String, text: String) -> Unit` - Overwrite a file with text
+- `append_text(path: String, text: String) -> Unit` - Append text to a file
 
 ### I/O Operations
 - `print(value: T) -> Unit` - Print value to stdout
@@ -356,19 +358,18 @@ fn main() {
 ```aura
 fn main() {
     let numbers: [Int] = [1, 2, 3, 4, 5];
+    let sum: Int = 0;
 
     for num in numbers {
         print(num);
     }
 
-    // Sum even numbers
-    let mut sum = 0;
     for i in 0..len(numbers) {
-        if numbers[i] % 2 == 0 {
+        if numbers[i] == 2 || numbers[i] == 4 {
             sum = sum + numbers[i];
         }
     }
 
-    print("Sum of evens: " + sum);
+    print(sum);
 }
 ```

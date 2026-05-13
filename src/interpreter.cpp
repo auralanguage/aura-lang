@@ -74,6 +74,26 @@ std::string ReadTextFile(const fs::path& path) {
     return buffer.str();
 }
 
+void WriteTextFile(const fs::path& path, const std::string& text, bool append) {
+    std::error_code error_code;
+    const fs::path parent = path.parent_path();
+    if (!parent.empty()) {
+        fs::create_directories(parent, error_code);
+        if (error_code) {
+            throw AuraError("Function `" + std::string(append ? "append_text" : "write_text") +
+                            "` could not create parent directories: " + path.string());
+        }
+    }
+
+    const std::ios::openmode mode = std::ios::out | std::ios::binary | (append ? std::ios::app : std::ios::trunc);
+    std::ofstream output(path, mode);
+    if (!output.is_open()) {
+        throw AuraError("Function `" + std::string(append ? "append_text" : "write_text") +
+                        "` could not open file: " + path.string());
+    }
+    output << text;
+}
+
 }  // namespace
 
 ReturnSignal::ReturnSignal(Value value) : value(std::move(value)) {}
@@ -832,6 +852,27 @@ Value Interpreter::Evaluate(const Expr* expr,
                     }
 
                     return MakeStringValue(ReadTextFile(ResolveRuntimePath(StringToString(**path_value), call->location)));
+                }
+
+                if (callee->name == "write_text" || callee->name == "append_text") {
+                    if (arguments.size() != 2) {
+                        throw AuraError("Function `" + callee->name + "` expects 2 arguments");
+                    }
+
+                    const auto* path_value = std::get_if<StringValuePtr>(&arguments[0]);
+                    if (path_value == nullptr) {
+                        throw AuraError("Function `" + callee->name + "` expects `String` as argument #1");
+                    }
+
+                    const auto* text_value = std::get_if<StringValuePtr>(&arguments[1]);
+                    if (text_value == nullptr) {
+                        throw AuraError("Function `" + callee->name + "` expects `String` as argument #2");
+                    }
+
+                    WriteTextFile(ResolveRuntimePath(StringToString(**path_value), call->location),
+                                  StringToString(**text_value),
+                                  callee->name == "append_text");
+                    return std::monostate{};
                 }
 
                 if (callee->name == "abs") {

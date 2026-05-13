@@ -35,6 +35,8 @@ enum class IrBuiltinKind {
     Join,
     FileExists,
     ReadText,
+    WriteText,
+    AppendText,
     Abs,
     Min,
     Max,

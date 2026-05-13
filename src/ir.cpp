@@ -47,6 +47,12 @@ IrBuiltinKind GetBuiltinKind(const std::string& name) {
     if (name == "read_text") {
         return IrBuiltinKind::ReadText;
     }
+    if (name == "write_text") {
+        return IrBuiltinKind::WriteText;
+    }
+    if (name == "append_text") {
+        return IrBuiltinKind::AppendText;
+    }
     if (name == "abs") {
         return IrBuiltinKind::Abs;
     }
@@ -115,6 +121,12 @@ class IrBuilder {
         function_signatures_["join"] = FunctionSignature{{}, {TypeKind::String, ""}, true};
         function_signatures_["file_exists"] = FunctionSignature{{}, {TypeKind::Bool, ""}, true};
         function_signatures_["read_text"] = FunctionSignature{{}, {TypeKind::String, ""}, true};
+        function_signatures_["write_text"] = FunctionSignature{{}, {TypeKind::Unit, ""}, true};
+        function_signatures_["append_text"] = FunctionSignature{{}, {TypeKind::Unit, ""}, true};
+        function_signatures_["abs"] = FunctionSignature{{}, {TypeKind::Int, ""}, true};
+        function_signatures_["min"] = FunctionSignature{{}, {TypeKind::Int, ""}, true};
+        function_signatures_["max"] = FunctionSignature{{}, {TypeKind::Int, ""}, true};
+        function_signatures_["pow"] = FunctionSignature{{}, {TypeKind::Int, ""}, true};
     }
 
     void CollectStructDeclarations() {
@@ -424,7 +436,8 @@ class IrBuilder {
                                                         std::move(arguments));
                 }
 
-                if (callee->name == "push" || callee->name == "insert" || callee->name == "clear") {
+                if (callee->name == "push" || callee->name == "insert" || callee->name == "clear" ||
+                    callee->name == "write_text" || callee->name == "append_text") {
                     return std::make_unique<IrCallExpr>(call->location,
                                                         TypeInfo{TypeKind::Unit, ""},
                                                         IrCallKind::Builtin,
@@ -455,6 +468,15 @@ class IrBuilder {
                 if (callee->name == "join" || callee->name == "read_text") {
                     return std::make_unique<IrCallExpr>(call->location,
                                                         TypeInfo{TypeKind::String, ""},
+                                                        IrCallKind::Builtin,
+                                                        GetBuiltinKind(callee->name),
+                                                        callee->name,
+                                                        std::move(arguments));
+                }
+
+                if (callee->name == "abs" || callee->name == "min" || callee->name == "max" || callee->name == "pow") {
+                    return std::make_unique<IrCallExpr>(call->location,
+                                                        TypeInfo{TypeKind::Int, ""},
                                                         IrCallKind::Builtin,
                                                         GetBuiltinKind(callee->name),
                                                         callee->name,

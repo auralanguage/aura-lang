@@ -33,6 +33,8 @@ Value AuraBuiltinEndsWith(const Value& value, const Value& suffix);
 Value AuraBuiltinJoin(const Value& values, const Value& separator);
 Value AuraBuiltinFileExists(const Value& path_value, const std::string& source_path);
 Value AuraBuiltinReadText(const Value& path_value, const std::string& source_path);
+Value AuraBuiltinWriteText(const Value& path_value, const Value& text_value, const std::string& source_path);
+Value AuraBuiltinAppendText(const Value& path_value, const Value& text_value, const std::string& source_path);
 Value AuraBuiltinAbs(const Value& value);
 Value AuraBuiltinMin(const Value& a, const Value& b);
 Value AuraBuiltinMax(const Value& a, const Value& b);

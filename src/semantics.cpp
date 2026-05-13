@@ -88,6 +88,8 @@ void TypeChecker::RegisterBuiltins() {
     function_signatures_["join"] = FunctionSignature{{}, {TypeKind::String, ""}, true};
     function_signatures_["file_exists"] = FunctionSignature{{}, {TypeKind::Bool, ""}, true};
     function_signatures_["read_text"] = FunctionSignature{{}, {TypeKind::String, ""}, true};
+    function_signatures_["write_text"] = FunctionSignature{{}, {TypeKind::Unit, ""}, true};
+    function_signatures_["append_text"] = FunctionSignature{{}, {TypeKind::Unit, ""}, true};
 }
 
 void TypeChecker::CollectStructDeclarations() {
@@ -851,6 +853,27 @@ TypeInfo TypeChecker::CheckExpression(const Expr* expr, TypeScopeStack& scopes) 
                 }
 
                 return {TypeKind::String, ""};
+            }
+
+            if (callee->name == "write_text" || callee->name == "append_text") {
+                if (call->arguments.size() != 2) {
+                    throw BuildLocationError(callee->location,
+                                             "Function `" + callee->name + "` expects 2 arguments");
+                }
+
+                const TypeInfo path_type = CheckExpression(call->arguments[0].get(), scopes);
+                if (path_type != TypeInfo{TypeKind::String, ""}) {
+                    throw BuildLocationError(call->arguments[0]->location,
+                                             "Function `" + callee->name + "` expects `String` as argument #1");
+                }
+
+                const TypeInfo text_type = CheckExpression(call->arguments[1].get(), scopes);
+                if (text_type != TypeInfo{TypeKind::String, ""}) {
+                    throw BuildLocationError(call->arguments[1]->location,
+                                             "Function `" + callee->name + "` expects `String` as argument #2");
+                }
+
+                return {TypeKind::Unit, ""};
             }
 
             if (callee->name == "abs") {
