@@ -16,4 +16,10 @@ fn main() {
     print(join(letters, "-"));
     print(file_exists("../fixtures/read_text_sample.txt"));
     print(contains(read_text("../fixtures/read_text_sample.txt"), "violet sample line"));
+
+    let path: String = "build/generated-tests/stdlib_helpers.txt";
+    write_text(path, "alpha");
+    append_text(path, "\nbeta");
+    print(file_exists(path));
+    print(read_text(path));
 }

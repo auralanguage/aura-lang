@@ -1,0 +1,3 @@
+fn main() {
+    write_text("build/generated-tests/invalid.txt", 42);
+}

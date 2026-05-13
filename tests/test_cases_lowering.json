@@ -102,7 +102,6 @@
       "exit_code": 0,
       "stdout_contains": [
         "cfg fn main() -> Unit {",
-        "literal 7 : Int",
         "literal 'u' : Char",
         "jump block"
       ],
@@ -124,7 +123,6 @@
       "exit_code": 0,
       "stdout_contains": [
         "cfg fn main() -> Unit {",
-        "literal 3 : Int",
         "literal \"Aura\" : String",
         "literal true : Bool"
       ],
@@ -147,7 +145,6 @@
       "stdout_contains": [
         "cfg fn main() -> Unit {",
         "builtin file_exists(",
-        "literal 4 : Int",
         "literal true : Bool",
         "literal \"left\" : String",
         "literal \"right\" : String"

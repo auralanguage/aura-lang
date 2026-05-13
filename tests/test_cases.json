@@ -41,14 +41,21 @@
       "name": "examples-stdlib",
       "args": ["examples/stdlib_showcase.aura"],
       "exit_code": 0,
-      "stdout_exact": "Aura!\n>go\ntrue\ntrue\ntrue\ntrue\ntrue\ntrue\ntrue\nalpha|beta|gamma\no-k\ntrue\ntrue",
+      "stdout_exact": "Aura!\n>go\ntrue\ntrue\ntrue\ntrue\ntrue\ntrue\ntrue\nalpha|beta|gamma\no-k\ntrue\ntrue\ntrue\nalpha\nbeta",
       "stderr_exact": ""
     },
     {
       "name": "stdlib-helpers",
       "args": ["tests/cases/stdlib_helpers.aura"],
       "exit_code": 0,
-      "stdout_exact": "Aura!\n>go\ntrue\ntrue\ntrue\ntrue\ntrue\ntrue\ntrue\nalpha|beta|gamma\no-k\ntrue\ntrue",
+      "stdout_exact": "Aura!\n>go\ntrue\ntrue\ntrue\ntrue\ntrue\ntrue\ntrue\nalpha|beta|gamma\no-k\ntrue\ntrue\ntrue\nalpha\nbeta",
+      "stderr_exact": ""
+    },
+    {
+      "name": "file-write-helpers",
+      "args": ["tests/cases/file_write_helpers.aura"],
+      "exit_code": 0,
+      "stdout_exact": "true\nalpha\nbeta",
       "stderr_exact": ""
     },
     {
@@ -590,6 +597,16 @@
       ]
     },
     {
+      "name": "write-text-type-error",
+      "args": ["tests/cases/write_text_type_error.aura"],
+      "exit_code": 1,
+      "stdout_exact": "",
+      "stderr_contains": [
+        "write_text_type_error.aura",
+        "Function `write_text` expects `String` as argument #2"
+      ]
+    },
+    {
       "name": "for-non-slice-type-error",
       "args": ["tests/cases/for_non_slice_type_error.aura"],
       "exit_code": 1,
@@ -727,7 +744,13 @@
       "stderr_contains": [
         "import_no_module_lib.aura",
         "Imported files must declare `module name;` before exporting symbols"
-      ]
+      ]    },
+    {
+      "name": "math-library-functions",
+      "args": ["examples/math_example.aura"],
+      "exit_code": 0,
+      "stdout_exact": "abs(-42) = \n42\nmin(10, 5) = \n5\nmax(10, 5) = \n10\npow(2, 8) = \n256\npow(3, 4) = \n81\nabs(min(-5, -10)) = \n10",
+      "stderr_exact": ""
     }
   ]
 }

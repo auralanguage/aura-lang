@@ -1,0 +1,7 @@
+fn main() {
+    let path: String = "build/generated-tests/file_write_helpers.txt";
+    write_text(path, "alpha");
+    append_text(path, "\nbeta");
+    print(file_exists(path));
+    print(read_text(path));
+}
