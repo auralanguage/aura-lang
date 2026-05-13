@@ -16,4 +16,10 @@ fn main() {
     print(join(letters, "-"));
     print(file_exists("messages.aura"));
     print(contains(read_text("messages.aura"), "module messages;"));
+
+    let path: String = "build/generated-tests/stdlib_showcase.txt";
+    write_text(path, "alpha");
+    append_text(path, "\nbeta");
+    print(file_exists(path));
+    print(read_text(path));
 }
