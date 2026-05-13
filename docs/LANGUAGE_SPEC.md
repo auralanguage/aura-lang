@@ -278,6 +278,7 @@ for index, ch in "hello" {
 
 ### Collection Operations
 - `len(value: T) -> Int` - Length of arrays, strings, slices
+- `[]` - Empty array literal, valid only when an explicit `[T]` context exists
 - `push(collection: [T], element: T) -> Unit` - Append to array
 - `pop(collection: [T]) -> T` - Remove and return last element
 - `insert(collection: [T], index: Int, element: T) -> Unit` - Insert at index
@@ -299,6 +300,9 @@ for index, ch in "hello" {
 - `read_text(path: String) -> String` - Read entire file as string
 - `write_text(path: String, text: String) -> Unit` - Overwrite a file with text
 - `append_text(path: String, text: String) -> Unit` - Append text to a file
+- `remove_file(path: String) -> Bool` - Remove a file, returns `true` if something was removed
+- `create_dir(path: String) -> Bool` - Create a directory tree, returns `true` if a new directory was created
+- `list_dir(path: String) -> [String]` - Return sorted entry names from a directory
 
 ### I/O Operations
 - `print(value: T) -> Unit` - Print value to stdout
@@ -358,6 +362,7 @@ fn main() {
 ```aura
 fn main() {
     let numbers: [Int] = [1, 2, 3, 4, 5];
+    let empty: [Int] = [];
     let sum: Int = 0;
 
     for num in numbers {
