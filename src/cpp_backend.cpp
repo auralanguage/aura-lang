@@ -359,6 +359,15 @@ class CfgCppBackendEmitter {
                 return "AuraBuiltinAppendText(" + ValueVarName(instruction.inputs.at(0)) + ", " +
                        ValueVarName(instruction.inputs.at(1)) + ", \"" +
                        EscapeForCppString(instruction.location.file_path) + "\")";
+            case IrBuiltinKind::RemoveFile:
+                return "AuraBuiltinRemoveFile(" + ValueVarName(instruction.inputs.at(0)) + ", \"" +
+                       EscapeForCppString(instruction.location.file_path) + "\")";
+            case IrBuiltinKind::CreateDir:
+                return "AuraBuiltinCreateDir(" + ValueVarName(instruction.inputs.at(0)) + ", \"" +
+                       EscapeForCppString(instruction.location.file_path) + "\")";
+            case IrBuiltinKind::ListDir:
+                return "AuraBuiltinListDir(" + ValueVarName(instruction.inputs.at(0)) + ", \"" +
+                       EscapeForCppString(instruction.location.file_path) + "\")";
             case IrBuiltinKind::Abs:
                 return "AuraBuiltinAbs(" + ValueVarName(instruction.inputs.at(0)) + ")";
             case IrBuiltinKind::Min:

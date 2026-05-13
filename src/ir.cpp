@@ -53,6 +53,15 @@ IrBuiltinKind GetBuiltinKind(const std::string& name) {
     if (name == "append_text") {
         return IrBuiltinKind::AppendText;
     }
+    if (name == "remove_file") {
+        return IrBuiltinKind::RemoveFile;
+    }
+    if (name == "create_dir") {
+        return IrBuiltinKind::CreateDir;
+    }
+    if (name == "list_dir") {
+        return IrBuiltinKind::ListDir;
+    }
     if (name == "abs") {
         return IrBuiltinKind::Abs;
     }
@@ -123,6 +132,9 @@ class IrBuilder {
         function_signatures_["read_text"] = FunctionSignature{{}, {TypeKind::String, ""}, true};
         function_signatures_["write_text"] = FunctionSignature{{}, {TypeKind::Unit, ""}, true};
         function_signatures_["append_text"] = FunctionSignature{{}, {TypeKind::Unit, ""}, true};
+        function_signatures_["remove_file"] = FunctionSignature{{}, {TypeKind::Bool, ""}, true};
+        function_signatures_["create_dir"] = FunctionSignature{{}, {TypeKind::Bool, ""}, true};
+        function_signatures_["list_dir"] = FunctionSignature{{}, {TypeKind::Slice, "String"}, true};
         function_signatures_["abs"] = FunctionSignature{{}, {TypeKind::Int, ""}, true};
         function_signatures_["min"] = FunctionSignature{{}, {TypeKind::Int, ""}, true};
         function_signatures_["max"] = FunctionSignature{{}, {TypeKind::Int, ""}, true};
@@ -229,14 +241,17 @@ class IrBuilder {
         }
 
         if (const auto* let_stmt = dynamic_cast<const LetStmt*>(stmt)) {
-            std::unique_ptr<IrExpr> initializer = LowerExpression(let_stmt->initializer.get(), scopes);
             const TypeInfo variable_type =
                 let_stmt->type_name.has_value() ? ResolveTypeName(*let_stmt->type_name, current_module_name_, let_stmt->location)
-                                                : initializer->type;
-            scopes.Declare(let_stmt->name, variable_type, let_stmt->location);
+                                                : TypeInfo{TypeKind::Unit, ""};
+            std::unique_ptr<IrExpr> initializer =
+                let_stmt->type_name.has_value() ? LowerExpression(let_stmt->initializer.get(), scopes, variable_type)
+                                                : LowerExpression(let_stmt->initializer.get(), scopes);
+            const TypeInfo final_variable_type = let_stmt->type_name.has_value() ? variable_type : initializer->type;
+            scopes.Declare(let_stmt->name, final_variable_type, let_stmt->location);
             return std::make_unique<IrLetStmt>(let_stmt->location,
                                                let_stmt->name,
-                                               variable_type,
+                                               final_variable_type,
                                                let_stmt->type_name.has_value(),
                                                std::move(initializer));
         }
@@ -294,6 +309,12 @@ class IrBuilder {
     }
 
     std::unique_ptr<IrExpr> LowerExpression(const Expr* expr, TypeScopeStack& scopes) {
+        return LowerExpression(expr, scopes, std::nullopt);
+    }
+
+    std::unique_ptr<IrExpr> LowerExpression(const Expr* expr,
+                                            TypeScopeStack& scopes,
+                                            const std::optional<TypeInfo>& expected_type) {
         if (const auto* literal = dynamic_cast<const LiteralExpr*>(expr)) {
             const TypeInfo type = TypeInfoFromValue(literal->value);
             return std::make_unique<IrLiteralExpr>(literal->location, type, literal->value);
@@ -302,9 +323,16 @@ class IrBuilder {
         if (const auto* array_literal = dynamic_cast<const ArrayLiteralExpr*>(expr)) {
             std::vector<std::unique_ptr<IrExpr>> elements;
             for (const auto& element : array_literal->elements) {
-                elements.push_back(LowerExpression(element.get(), scopes));
+                elements.push_back(LowerExpression(
+                    element.get(),
+                    scopes,
+                    expected_type.has_value() && expected_type->kind == TypeKind::Slice
+                        ? std::optional<TypeInfo>{TypeInfoFromAnnotation(expected_type->name)}
+                        : std::nullopt));
             }
-            const TypeInfo type{TypeKind::Slice, TypeInfoName(elements.front()->type)};
+            const TypeInfo type = elements.empty()
+                                      ? expected_type.value_or(TypeInfo{TypeKind::Slice, ""})
+                                      : TypeInfo{TypeKind::Slice, TypeInfoName(elements.front()->type)};
             return std::make_unique<IrArrayLiteralExpr>(array_literal->location, type, std::move(elements));
         }
 
@@ -316,7 +344,7 @@ class IrBuilder {
 
         if (const auto* assign = dynamic_cast<const AssignExpr*>(expr)) {
             std::unique_ptr<IrExpr> target = LowerExpression(assign->target.get(), scopes);
-            std::unique_ptr<IrExpr> value = LowerExpression(assign->value.get(), scopes);
+            std::unique_ptr<IrExpr> value = LowerExpression(assign->value.get(), scopes, target->type);
             return std::make_unique<IrAssignExpr>(assign->location, target->type, std::move(target), std::move(value));
         }
 
@@ -377,8 +405,10 @@ class IrBuilder {
             const TypeInfo struct_type =
                 ResolveTypeName(struct_literal->type_name, current_module_name_, struct_literal->location);
             std::vector<IrStructLiteralField> fields;
+            const auto& struct_fields = struct_signatures_.at(struct_type.name).fields;
             for (const auto& field : struct_literal->fields) {
-                fields.push_back(IrStructLiteralField{field.name, LowerExpression(field.value.get(), scopes)});
+                fields.push_back(
+                    IrStructLiteralField{field.name, LowerExpression(field.value.get(), scopes, struct_fields.at(field.name))});
             }
             return std::make_unique<IrStructLiteralExpr>(struct_literal->location,
                                                          struct_type,
@@ -414,8 +444,14 @@ class IrBuilder {
         if (const auto* call = dynamic_cast<const CallExpr*>(expr)) {
             if (const auto* callee = dynamic_cast<const VariableExpr*>(call->callee.get())) {
                 std::vector<std::unique_ptr<IrExpr>> arguments;
-                for (const auto& argument : call->arguments) {
-                    arguments.push_back(LowerExpression(argument.get(), scopes));
+                const std::string resolved_name = ResolveFunctionName(callee->name);
+                const auto signature_it = function_signatures_.find(resolved_name);
+                for (std::size_t i = 0; i < call->arguments.size(); ++i) {
+                    const std::optional<TypeInfo> parameter_type =
+                        signature_it != function_signatures_.end() && i < signature_it->second.parameter_types.size()
+                            ? std::optional<TypeInfo>{signature_it->second.parameter_types[i]}
+                            : std::nullopt;
+                    arguments.push_back(LowerExpression(call->arguments[i].get(), scopes, parameter_type));
                 }
 
                 if (callee->name == "print") {
@@ -456,7 +492,7 @@ class IrBuilder {
                 }
 
                 if (callee->name == "contains" || callee->name == "starts_with" || callee->name == "ends_with" ||
-                    callee->name == "file_exists") {
+                    callee->name == "file_exists" || callee->name == "remove_file" || callee->name == "create_dir") {
                     return std::make_unique<IrCallExpr>(call->location,
                                                         TypeInfo{TypeKind::Bool, ""},
                                                         IrCallKind::Builtin,
@@ -474,6 +510,15 @@ class IrBuilder {
                                                         std::move(arguments));
                 }
 
+                if (callee->name == "list_dir") {
+                    return std::make_unique<IrCallExpr>(call->location,
+                                                        TypeInfo{TypeKind::Slice, "String"},
+                                                        IrCallKind::Builtin,
+                                                        GetBuiltinKind(callee->name),
+                                                        callee->name,
+                                                        std::move(arguments));
+                }
+
                 if (callee->name == "abs" || callee->name == "min" || callee->name == "max" || callee->name == "pow") {
                     return std::make_unique<IrCallExpr>(call->location,
                                                         TypeInfo{TypeKind::Int, ""},
@@ -483,7 +528,6 @@ class IrBuilder {
                                                         std::move(arguments));
                 }
 
-                const std::string resolved_name = ResolveFunctionName(callee->name);
                 const TypeInfo type = function_signatures_.at(resolved_name).return_type;
                 return std::make_unique<IrCallExpr>(call->location,
                                                     type,
@@ -497,13 +541,14 @@ class IrBuilder {
                 std::unique_ptr<IrExpr> receiver = LowerExpression(callee->object.get(), scopes);
                 std::vector<std::unique_ptr<IrExpr>> arguments;
                 arguments.push_back(std::move(receiver));
-                for (const auto& argument : call->arguments) {
-                    arguments.push_back(LowerExpression(argument.get(), scopes));
-                }
 
                 const std::string resolved_name =
                     ResolveMethodName(arguments.front()->type, callee->member_name, callee->location);
-                const TypeInfo type = function_signatures_.at(resolved_name).return_type;
+                const auto& signature = function_signatures_.at(resolved_name);
+                for (std::size_t i = 0; i < call->arguments.size(); ++i) {
+                    arguments.push_back(LowerExpression(call->arguments[i].get(), scopes, signature.parameter_types[i + 1]));
+                }
+                const TypeInfo type = signature.return_type;
                 return std::make_unique<IrCallExpr>(call->location,
                                                     type,
                                                     IrCallKind::UserFunction,

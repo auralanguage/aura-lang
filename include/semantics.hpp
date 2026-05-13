@@ -61,6 +61,7 @@ class TypeChecker {
     bool CheckStatement(const Stmt* stmt, TypeScopeStack& scopes);
     bool CheckScopedStatement(const Stmt* stmt, TypeScopeStack& scopes);
     TypeInfo CheckExpression(const Expr* expr, TypeScopeStack& scopes);
+    TypeInfo CheckExpression(const Expr* expr, TypeScopeStack& scopes, const std::optional<TypeInfo>& expected_type);
 
     static std::string GetFullFunctionName(const FunctionDecl& function);
     static std::string GetFullStructName(const StructDecl& struct_decl);

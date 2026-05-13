@@ -206,6 +206,9 @@ bool IsBuiltinCollectionMutator(IrBuiltinKind builtin_kind) {
     case IrBuiltinKind::ReadText:
     case IrBuiltinKind::WriteText:
     case IrBuiltinKind::AppendText:
+    case IrBuiltinKind::RemoveFile:
+    case IrBuiltinKind::CreateDir:
+    case IrBuiltinKind::ListDir:
     case IrBuiltinKind::Abs:
     case IrBuiltinKind::Min:
     case IrBuiltinKind::Max:
@@ -430,6 +433,9 @@ std::optional<Value> TryFoldBuiltinFromLocalProducer(const CfgFunctionDecl& func
         case IrBuiltinKind::ReadText:
         case IrBuiltinKind::WriteText:
         case IrBuiltinKind::AppendText:
+        case IrBuiltinKind::RemoveFile:
+        case IrBuiltinKind::CreateDir:
+        case IrBuiltinKind::ListDir:
         case IrBuiltinKind::Abs:
         case IrBuiltinKind::Min:
         case IrBuiltinKind::Max:
@@ -510,6 +516,9 @@ std::optional<Value> TryFoldBuiltin(const CfgInstruction& instruction, const std
         case IrBuiltinKind::ReadText:
         case IrBuiltinKind::WriteText:
         case IrBuiltinKind::AppendText:
+        case IrBuiltinKind::RemoveFile:
+        case IrBuiltinKind::CreateDir:
+        case IrBuiltinKind::ListDir:
         case IrBuiltinKind::Abs:
             if (arguments.size() == 1 && std::holds_alternative<long long>(arguments[0])) {
                 return AuraBuiltinAbs(arguments[0]);
@@ -1017,6 +1026,9 @@ void ApplyCollectionFactsForInstruction(const ConstantMap& constants,
                 case IrBuiltinKind::ReadText:
                 case IrBuiltinKind::WriteText:
                 case IrBuiltinKind::AppendText:
+                case IrBuiltinKind::RemoveFile:
+                case IrBuiltinKind::CreateDir:
+                case IrBuiltinKind::ListDir:
                 case IrBuiltinKind::Abs:
                 case IrBuiltinKind::Min:
                 case IrBuiltinKind::Max:

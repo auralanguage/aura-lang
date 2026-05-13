@@ -84,6 +84,9 @@ class FunctionTable {
         AddBuiltin("read_text", {}, {TypeKind::String, ""});
         AddBuiltin("write_text", {}, {TypeKind::Unit, ""});
         AddBuiltin("append_text", {}, {TypeKind::Unit, ""});
+        AddBuiltin("remove_file", {}, {TypeKind::Bool, ""});
+        AddBuiltin("create_dir", {}, {TypeKind::Bool, ""});
+        AddBuiltin("list_dir", {}, {TypeKind::Slice, "String"});
         AddBuiltin("abs", {}, {TypeKind::Int, ""});
         AddBuiltin("min", {}, {TypeKind::Int, ""});
         AddBuiltin("max", {}, {TypeKind::Int, ""});
@@ -225,6 +228,19 @@ void VerifyBuiltinCall(const SourceLocation& location,
             argument_types[1] != TypeInfo{TypeKind::String, ""} ||
             result_type != TypeInfo{TypeKind::Unit, ""}) {
             throw BuildLocationError(location, "Builtin `" + callee_name + "` verifier check failed");
+        }
+        return;
+    case IrBuiltinKind::RemoveFile:
+    case IrBuiltinKind::CreateDir:
+        if (argument_types.size() != 1 || argument_types[0] != TypeInfo{TypeKind::String, ""} ||
+            result_type != TypeInfo{TypeKind::Bool, ""}) {
+            throw BuildLocationError(location, "Builtin `" + callee_name + "` verifier check failed");
+        }
+        return;
+    case IrBuiltinKind::ListDir:
+        if (argument_types.size() != 1 || argument_types[0] != TypeInfo{TypeKind::String, ""} ||
+            result_type != TypeInfo{TypeKind::Slice, "String"}) {
+            throw BuildLocationError(location, "Builtin `list_dir` verifier check failed");
         }
         return;
     case IrBuiltinKind::Abs:
@@ -442,7 +458,7 @@ class IrProgramVerifier {
         }
 
         if (const auto* array_literal = dynamic_cast<const IrArrayLiteralExpr*>(expr)) {
-            if (array_literal->type.kind != TypeKind::Slice || array_literal->elements.empty()) {
+            if (array_literal->type.kind != TypeKind::Slice) {
                 throw BuildLocationError(array_literal->location, "IR verifier found an invalid array literal");
             }
             const TypeInfo element_type = TypeInfoFromAnnotation(array_literal->type.name);

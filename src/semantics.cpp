@@ -90,6 +90,9 @@ void TypeChecker::RegisterBuiltins() {
     function_signatures_["read_text"] = FunctionSignature{{}, {TypeKind::String, ""}, true};
     function_signatures_["write_text"] = FunctionSignature{{}, {TypeKind::Unit, ""}, true};
     function_signatures_["append_text"] = FunctionSignature{{}, {TypeKind::Unit, ""}, true};
+    function_signatures_["remove_file"] = FunctionSignature{{}, {TypeKind::Bool, ""}, true};
+    function_signatures_["create_dir"] = FunctionSignature{{}, {TypeKind::Bool, ""}, true};
+    function_signatures_["list_dir"] = FunctionSignature{{}, {TypeKind::Slice, "String"}, true};
 }
 
 void TypeChecker::CollectStructDeclarations() {
@@ -221,18 +224,21 @@ bool TypeChecker::CheckStatement(const Stmt* stmt, TypeScopeStack& scopes) {
     }
 
     if (const auto* let_stmt = dynamic_cast<const LetStmt*>(stmt)) {
-        const TypeInfo initializer_type = CheckExpression(let_stmt->initializer.get(), scopes);
         const TypeInfo declared_type =
             let_stmt->type_name.has_value() ? ResolveTypeName(*let_stmt->type_name, current_module_name_, let_stmt->location)
-                                            : initializer_type;
+                                            : TypeInfo{TypeKind::Unit, ""};
+        const TypeInfo initializer_type =
+            let_stmt->type_name.has_value() ? CheckExpression(let_stmt->initializer.get(), scopes, declared_type)
+                                            : CheckExpression(let_stmt->initializer.get(), scopes);
+        const TypeInfo final_declared_type = let_stmt->type_name.has_value() ? declared_type : initializer_type;
 
-        if (initializer_type != declared_type) {
+        if (initializer_type != final_declared_type) {
             throw BuildLocationError(let_stmt->location,
-                                     "Variable `" + let_stmt->name + "` expects `" + TypeInfoName(declared_type) +
+                                     "Variable `" + let_stmt->name + "` expects `" + TypeInfoName(final_declared_type) +
                                          "`, but got `" + TypeInfoName(initializer_type) + "`");
         }
 
-        scopes.Declare(let_stmt->name, declared_type, let_stmt->location);
+        scopes.Declare(let_stmt->name, final_declared_type, let_stmt->location);
         return false;
     }
 
@@ -302,18 +308,32 @@ bool TypeChecker::CheckScopedStatement(const Stmt* stmt, TypeScopeStack& scopes)
 }
 
 TypeInfo TypeChecker::CheckExpression(const Expr* expr, TypeScopeStack& scopes) {
+    return CheckExpression(expr, scopes, std::nullopt);
+}
+
+TypeInfo TypeChecker::CheckExpression(const Expr* expr,
+                                      TypeScopeStack& scopes,
+                                      const std::optional<TypeInfo>& expected_type) {
     if (const auto* literal = dynamic_cast<const LiteralExpr*>(expr)) {
         return TypeInfoFromValue(literal->value);
     }
 
     if (const auto* array_literal = dynamic_cast<const ArrayLiteralExpr*>(expr)) {
         if (array_literal->elements.empty()) {
-            throw BuildLocationError(array_literal->location, "Empty array literals are not supported yet");
+            if (!expected_type.has_value() || expected_type->kind != TypeKind::Slice) {
+                throw BuildLocationError(array_literal->location,
+                                         "Empty array literals require an explicit `[T]` type context");
+            }
+            return *expected_type;
         }
 
-        const TypeInfo element_type = CheckExpression(array_literal->elements[0].get(), scopes);
+        const TypeInfo element_type = CheckExpression(array_literal->elements[0].get(),
+                                                      scopes,
+                                                      expected_type.has_value() && expected_type->kind == TypeKind::Slice
+                                                          ? std::optional<TypeInfo>{TypeInfoFromAnnotation(expected_type->name)}
+                                                          : std::nullopt);
         for (std::size_t i = 1; i < array_literal->elements.size(); ++i) {
-            const TypeInfo current_type = CheckExpression(array_literal->elements[i].get(), scopes);
+            const TypeInfo current_type = CheckExpression(array_literal->elements[i].get(), scopes, element_type);
             if (current_type != element_type) {
                 throw BuildLocationError(array_literal->elements[i]->location,
                                          "Array elements must all have the same type, but got `" +
@@ -357,7 +377,7 @@ TypeInfo TypeChecker::CheckExpression(const Expr* expr, TypeScopeStack& scopes) 
             }
             seen_fields[field.name] = true;
 
-            const TypeInfo actual_type = CheckExpression(field.value.get(), scopes);
+            const TypeInfo actual_type = CheckExpression(field.value.get(), scopes, field_it->second);
             if (actual_type != field_it->second) {
                 throw BuildLocationError(field.value->location,
                                          "Field `" + field.name + "` expects `" + TypeInfoName(field_it->second) +
@@ -466,10 +486,9 @@ TypeInfo TypeChecker::CheckExpression(const Expr* expr, TypeScopeStack& scopes) 
     }
 
     if (const auto* assign = dynamic_cast<const AssignExpr*>(expr)) {
-        const TypeInfo value_type = CheckExpression(assign->value.get(), scopes);
-
         if (const auto* variable = dynamic_cast<const VariableExpr*>(assign->target.get())) {
             const TypeInfo variable_type = scopes.Get(variable->name, variable->location);
+            const TypeInfo value_type = CheckExpression(assign->value.get(), scopes, variable_type);
             if (variable_type != value_type) {
                 throw BuildLocationError(assign->location,
                                          "Assignment type mismatch: `" + variable->name + "` is `" +
@@ -496,6 +515,7 @@ TypeInfo TypeChecker::CheckExpression(const Expr* expr, TypeScopeStack& scopes) 
                                          "Struct `" + object_type.name + "` has no field `" + member->member_name + "`");
             }
 
+            const TypeInfo value_type = CheckExpression(assign->value.get(), scopes, field_it->second);
             if (field_it->second != value_type) {
                 throw BuildLocationError(assign->location,
                                          "Field `" + member->member_name + "` expects `" +
@@ -514,6 +534,7 @@ TypeInfo TypeChecker::CheckExpression(const Expr* expr, TypeScopeStack& scopes) 
                 }
 
                 const TypeInfo element_type = TypeInfoFromAnnotation(object_type.name);
+                const TypeInfo value_type = CheckExpression(assign->value.get(), scopes, element_type);
                 if (element_type != value_type) {
                     throw BuildLocationError(assign->location,
                                              "Slice element expects `" + TypeInfoName(element_type) + "`, but got `" +
@@ -642,8 +663,8 @@ TypeInfo TypeChecker::CheckExpression(const Expr* expr, TypeScopeStack& scopes) 
                                              "Function `push` expects a slice as argument #1");
                 }
 
-                const TypeInfo value_type = CheckExpression(call->arguments[1].get(), scopes);
                 const TypeInfo element_type = TypeInfoFromAnnotation(target_type.name);
+                const TypeInfo value_type = CheckExpression(call->arguments[1].get(), scopes, element_type);
                 if (value_type != element_type) {
                     throw BuildLocationError(call->arguments[1]->location,
                                              "Function `push` expects `" + TypeInfoName(element_type) +
@@ -684,8 +705,8 @@ TypeInfo TypeChecker::CheckExpression(const Expr* expr, TypeScopeStack& scopes) 
                                              "Function `insert` expects `Int` for argument #2");
                 }
 
-                const TypeInfo value_type = CheckExpression(call->arguments[2].get(), scopes);
                 const TypeInfo element_type = TypeInfoFromAnnotation(target_type.name);
+                const TypeInfo value_type = CheckExpression(call->arguments[2].get(), scopes, element_type);
                 if (value_type != element_type) {
                     throw BuildLocationError(call->arguments[2]->location,
                                              "Function `insert` expects `" + TypeInfoName(element_type) +
@@ -876,6 +897,35 @@ TypeInfo TypeChecker::CheckExpression(const Expr* expr, TypeScopeStack& scopes) 
                 return {TypeKind::Unit, ""};
             }
 
+            if (callee->name == "remove_file" || callee->name == "create_dir") {
+                if (call->arguments.size() != 1) {
+                    throw BuildLocationError(callee->location,
+                                             "Function `" + callee->name + "` expects 1 argument");
+                }
+
+                const TypeInfo path_type = CheckExpression(call->arguments[0].get(), scopes);
+                if (path_type != TypeInfo{TypeKind::String, ""}) {
+                    throw BuildLocationError(call->arguments[0]->location,
+                                             "Function `" + callee->name + "` expects `String` as argument #1");
+                }
+
+                return {TypeKind::Bool, ""};
+            }
+
+            if (callee->name == "list_dir") {
+                if (call->arguments.size() != 1) {
+                    throw BuildLocationError(callee->location, "Function `list_dir` expects 1 argument");
+                }
+
+                const TypeInfo path_type = CheckExpression(call->arguments[0].get(), scopes);
+                if (path_type != TypeInfo{TypeKind::String, ""}) {
+                    throw BuildLocationError(call->arguments[0]->location,
+                                             "Function `list_dir` expects `String` as argument #1");
+                }
+
+                return {TypeKind::Slice, "String"};
+            }
+
             if (callee->name == "abs") {
                 if (call->arguments.size() != 1) {
                     throw BuildLocationError(callee->location, "Function `abs` expects 1 argument");
@@ -965,8 +1015,8 @@ TypeInfo TypeChecker::CheckExpression(const Expr* expr, TypeScopeStack& scopes) 
             }
 
             for (std::size_t i = 0; i < call->arguments.size(); ++i) {
-                const TypeInfo actual_type = CheckExpression(call->arguments[i].get(), scopes);
                 const TypeInfo expected_type = signature.parameter_types[i];
+                const TypeInfo actual_type = CheckExpression(call->arguments[i].get(), scopes, expected_type);
                 if (actual_type != expected_type) {
                     throw BuildLocationError(call->arguments[i]->location,
                                              "Function `" + callee->name + "` expects `" +
@@ -994,8 +1044,8 @@ TypeInfo TypeChecker::CheckExpression(const Expr* expr, TypeScopeStack& scopes) 
             }
 
             for (std::size_t i = 0; i < call->arguments.size(); ++i) {
-                const TypeInfo actual_type = CheckExpression(call->arguments[i].get(), scopes);
                 const TypeInfo expected_type = signature.parameter_types[i + 1];
+                const TypeInfo actual_type = CheckExpression(call->arguments[i].get(), scopes, expected_type);
                 if (actual_type != expected_type) {
                     throw BuildLocationError(call->arguments[i]->location,
                                              "Method `" + callee->member_name + "` expects `" +

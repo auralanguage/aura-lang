@@ -1,5 +1,6 @@
 #include "interpreter.hpp"
 
+#include <algorithm>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -72,6 +73,32 @@ std::string ReadTextFile(const fs::path& path) {
     std::ostringstream buffer;
     buffer << input.rdbuf();
     return buffer.str();
+}
+
+std::vector<Value> ListDirectoryEntries(const fs::path& path) {
+    std::error_code error_code;
+    if (!fs::exists(path, error_code) || error_code) {
+        throw AuraError("Function `list_dir` could not open directory: " + path.string());
+    }
+    if (!fs::is_directory(path, error_code) || error_code) {
+        throw AuraError("Function `list_dir` expects a directory path: " + path.string());
+    }
+
+    std::vector<std::string> names;
+    for (const auto& entry : fs::directory_iterator(path, error_code)) {
+        if (error_code) {
+            throw AuraError("Function `list_dir` could not iterate directory: " + path.string());
+        }
+        names.push_back(entry.path().filename().string());
+    }
+
+    std::sort(names.begin(), names.end());
+    std::vector<Value> values;
+    values.reserve(names.size());
+    for (const auto& name : names) {
+        values.push_back(MakeStringValue(name));
+    }
+    return values;
 }
 
 void WriteTextFile(const fs::path& path, const std::string& text, bool append) {
@@ -873,6 +900,59 @@ Value Interpreter::Evaluate(const Expr* expr,
                                   StringToString(**text_value),
                                   callee->name == "append_text");
                     return std::monostate{};
+                }
+
+                if (callee->name == "remove_file") {
+                    if (arguments.size() != 1) {
+                        throw AuraError("Function `remove_file` expects 1 argument");
+                    }
+
+                    const auto* path_value = std::get_if<StringValuePtr>(&arguments[0]);
+                    if (path_value == nullptr) {
+                        throw AuraError("Function `remove_file` expects `String` as argument #1");
+                    }
+
+                    std::error_code error_code;
+                    const bool removed =
+                        fs::remove(ResolveRuntimePath(StringToString(**path_value), call->location), error_code);
+                    if (error_code) {
+                        throw AuraError("Function `remove_file` could not remove path");
+                    }
+                    return removed;
+                }
+
+                if (callee->name == "create_dir") {
+                    if (arguments.size() != 1) {
+                        throw AuraError("Function `create_dir` expects 1 argument");
+                    }
+
+                    const auto* path_value = std::get_if<StringValuePtr>(&arguments[0]);
+                    if (path_value == nullptr) {
+                        throw AuraError("Function `create_dir` expects `String` as argument #1");
+                    }
+
+                    std::error_code error_code;
+                    const fs::path resolved_path = ResolveRuntimePath(StringToString(**path_value), call->location);
+                    const bool created = fs::create_directories(resolved_path, error_code);
+                    if (error_code) {
+                        throw AuraError("Function `create_dir` could not create directory: " + resolved_path.string());
+                    }
+                    return created;
+                }
+
+                if (callee->name == "list_dir") {
+                    if (arguments.size() != 1) {
+                        throw AuraError("Function `list_dir` expects 1 argument");
+                    }
+
+                    const auto* path_value = std::get_if<StringValuePtr>(&arguments[0]);
+                    if (path_value == nullptr) {
+                        throw AuraError("Function `list_dir` expects `String` as argument #1");
+                    }
+
+                    return MakeArrayValue("String",
+                                          ListDirectoryEntries(
+                                              ResolveRuntimePath(StringToString(**path_value), call->location)));
                 }
 
                 if (callee->name == "abs") {

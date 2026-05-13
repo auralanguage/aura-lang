@@ -1,5 +1,6 @@
 #include "runtime_support.hpp"
 
+#include <algorithm>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -53,6 +54,32 @@ std::string AuraReadTextFile(const fs::path& path) {
     std::ostringstream buffer;
     buffer << input.rdbuf();
     return buffer.str();
+}
+
+std::vector<Value> AuraListDirectoryEntries(const fs::path& path) {
+    std::error_code error_code;
+    if (!fs::exists(path, error_code) || error_code) {
+        throw AuraError("Function `list_dir` could not open directory: " + path.string());
+    }
+    if (!fs::is_directory(path, error_code) || error_code) {
+        throw AuraError("Function `list_dir` expects a directory path: " + path.string());
+    }
+
+    std::vector<std::string> names;
+    for (const auto& entry : fs::directory_iterator(path, error_code)) {
+        if (error_code) {
+            throw AuraError("Function `list_dir` could not iterate directory: " + path.string());
+        }
+        names.push_back(entry.path().filename().string());
+    }
+
+    std::sort(names.begin(), names.end());
+    std::vector<Value> values;
+    values.reserve(names.size());
+    for (const auto& name : names) {
+        values.push_back(MakeStringValue(name));
+    }
+    return values;
 }
 
 void AuraWriteTextFile(const fs::path& path, const std::string& text, bool append) {
@@ -580,6 +607,45 @@ Value AuraBuiltinAppendText(const Value& path_value, const Value& text_value, co
                       StringToString(**text_string),
                       true);
     return std::monostate{};
+}
+
+Value AuraBuiltinRemoveFile(const Value& path_value, const std::string& source_path) {
+    const auto* path_string = std::get_if<StringValuePtr>(&path_value);
+    if (path_string == nullptr) {
+        throw AuraError("Function `remove_file` expects `String` as argument #1");
+    }
+
+    std::error_code error_code;
+    const bool removed = fs::remove(AuraResolveRuntimePath(StringToString(**path_string), source_path), error_code);
+    if (error_code) {
+        throw AuraError("Function `remove_file` could not remove path");
+    }
+    return removed;
+}
+
+Value AuraBuiltinCreateDir(const Value& path_value, const std::string& source_path) {
+    const auto* path_string = std::get_if<StringValuePtr>(&path_value);
+    if (path_string == nullptr) {
+        throw AuraError("Function `create_dir` expects `String` as argument #1");
+    }
+
+    std::error_code error_code;
+    const fs::path path = AuraResolveRuntimePath(StringToString(**path_string), source_path);
+    const bool created = fs::create_directories(path, error_code);
+    if (error_code) {
+        throw AuraError("Function `create_dir` could not create directory: " + path.string());
+    }
+    return created;
+}
+
+Value AuraBuiltinListDir(const Value& path_value, const std::string& source_path) {
+    const auto* path_string = std::get_if<StringValuePtr>(&path_value);
+    if (path_string == nullptr) {
+        throw AuraError("Function `list_dir` expects `String` as argument #1");
+    }
+
+    const fs::path path = AuraResolveRuntimePath(StringToString(**path_string), source_path);
+    return MakeArrayValue("String", AuraListDirectoryEntries(path));
 }
 
 Value AuraBuiltinAbs(const Value& value) {

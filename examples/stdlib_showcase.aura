@@ -22,4 +22,13 @@ fn main() {
     append_text(path, "\nbeta");
     print(file_exists(path));
     print(read_text(path));
+
+    let dir_path: String = "build/generated-tests/stdlib_showcase_dir";
+    create_dir(dir_path);
+    write_text(dir_path + "/first.txt", "alpha");
+    write_text(dir_path + "/second.txt", "beta");
+    let entries: [String] = list_dir(dir_path);
+    print(len(entries));
+    print(entries);
+    print(remove_file(dir_path + "/missing.txt"));
 }
