@@ -1,5 +1,5 @@
 # Aura
-
+Only Windows
 <p align="center">
   <img src="branding/aura-logo.svg" alt="Aura logo" width="220">
 </p>
@@ -128,17 +128,6 @@ aura.exe build --profile release
 - `tests/` - regression suites and fixtures
 - `scripts/` - helper scripts
 - `packaging/` - Windows release packaging files
-
-## Suggested GitHub Topics
-
-- `programming-language`
-- `compiler`
-- `interpreter`
-- `language-design`
-- `cpp`
-- `ssa`
-- `toolchain`
-- `windows`
 
 ## License
 
